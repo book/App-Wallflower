@@ -32,6 +32,26 @@ push @tests, [
     [ 'wrong' => 500, [], '', '' ],
 ];
 
+push @tests, [
+    'content in a glob',
+    tempdir( CLEANUP => 1 ),
+    sub {
+        [   200,
+            [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+            do {
+                my $file = File::Spec->catfile( $tests[0][1], 'index.html' );
+                open my $fh, '<', $file or die "Can't open $file: $!";
+                $fh;
+                }
+        ];
+    },
+    [   '/' => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        'index.html',
+        'Hello, World!'
+    ],
+];
+
 plan tests => sum map 2 * ( @$_ - 3 ), @tests;
 
 for my $t (@tests) {
