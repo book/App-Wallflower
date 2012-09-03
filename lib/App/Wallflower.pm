@@ -52,8 +52,15 @@ sub get {
 
     # setup the environment
     my $env = {
-        %ENV,               # current environment
-        %{ $self->env },    # current instance defaults
+
+        # current environment
+        %ENV,
+
+        # overridable defaults
+        'psgi.errors' => \*STDERR,
+
+        # current instance defaults
+        %{ $self->env },
 
         # request-related environment variables
         REQUEST_METHOD => 'GET',
