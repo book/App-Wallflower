@@ -2,34 +2,63 @@ use strict;
 use warnings;
 use Test::More;
 use File::Temp qw( tempdir );
+use List::Util qw( sum );
 use App::Wallflower;
 
-my $dir = tempdir( CLEANUP => 1 );
-my $app = sub {
-    return [
-        200, [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
-        ['Hello,', ' ', 'World!']
-    ];
-};
+# setup test data
+my @tests;
 
-my $wf = App::Wallflower->new(
-    application => $app,
-    destination => $dir,
-);
+# test data is an array ref containing:
+# - quick description of the app
+# - destination directory
+# - the app itself
+# - a list of test url for the app
+#   as [ url, status, headers, file, content ]
 
-plan tests => 2;
-
-my $result = $wf->get('/');
-is_deeply(
-    $result,
-    [   200,
+push @tests, [
+    'direct content',
+    tempdir( CLEANUP => 1 ),
+    sub {
+        [   200,
+            [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+            [ 'Hello,', ' ', 'World!' ]
+        ];
+    },
+    [   '/' => 200,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
-        File::Spec->catfile( $dir, 'index.html' )
+        'index.html',
+        'Hello, World!'
     ],
-    'hello app'
-);
+];
 
-my $file = $result->[2];
-my $content = do { local $/; local @ARGV = ( $file ); <> };
-is( $content, 'Hello, World!', 'hello content' );
+plan tests => sum map 2 * ( @$_ - 3 ), @tests;
 
+for my $t (@tests) {
+    my ( $desc, $dir, $app, @urls ) = @$t;
+
+    my $wf = App::Wallflower->new(
+        application => $app,
+        destination => $dir,
+    );
+
+    for my $u (@urls) {
+        my ( $url, $status, $headers, $file, $content ) = @$u;
+
+        my $result = $wf->get($url);
+        is_deeply(
+            $result,
+            [   $status, $headers, $file && File::Spec->catfile( $dir, $file )
+            ],
+            "app ($desc) for $url"
+        );
+
+        if ( $status eq '200' ) {
+            my $file_content
+                = do { local $/; local @ARGV = ( $result->[2] ); <> };
+            is( $file_content, $content, "content ($desc) for $url" );
+        }
+        else {
+            is( $result->[2], '', "no file ($desc) for $url" );
+        }
+    }
+}
