@@ -29,6 +29,7 @@ push @tests, [
         'index.html',
         'Hello, World!'
     ],
+    [ 'wrong' => 500, [], '', '' ],
 ];
 
 plan tests => sum map 2 * ( @$_ - 3 ), @tests;
