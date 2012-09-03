@@ -119,3 +119,93 @@ sub get {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+App::Wallflower - Class performing the moves for the wallflower program
+
+=head1 SYNOPSIS
+
+    use App::Wallflower;
+
+    my $w = App::Wallflower->new(
+        application => $app, # a PSGI app
+        destination => $dir, # target directory
+    );
+
+    # dump all URL from $app to files in $dir
+    $w->get( $_ ) for @urls;
+
+=head1 DESCRIPTION
+
+This module contains the core functionality of the L<wallflower> program,
+that provides user-friendly functionality.
+
+=head1 METHODS
+
+=head2 new( %args )
+
+Create a new L<App::Wallflower> object.
+
+The parameters are:
+
+=over 4
+
+=item C<application>
+
+The PSGI/Plack application, as a CODE reference.
+
+This parameter is I<required>.
+
+=item C<destination>
+
+The destination directory. By default, will use the current directory.
+
+=item C<env>
+
+Additional environment key/value pairs.
+
+=item C<index>
+
+The default file name for URL ending with a C</>.
+The default value is F<index.html>.
+
+=back
+
+
+=head2 get( $url )
+
+Perform a C<GET> request for C<$url> through the application, and
+in case of success, save the result to a file, whose name is obtained
+via the C<target()> method.
+
+C<$url> may be either a string or a L<URI> object, representing an
+absolute URL (the path starts with a C</>). The scheme, host and port
+elements are optional. The query string will be ignored.
+
+=head2 target( $uri )
+
+Note that target assumes C<$uri> is a L<URI> object.
+
+=head1 ACCESSORS
+
+Accessors (that are both getters and setters) exist for all parameters
+to C<new()> and bear the same name.
+
+=head1 AUTHOR
+
+Philippe Bruhat (BooK)
+
+=head1 COPYRIGHT
+
+Copyright 2010-2012 Philippe Bruhat (BooK), all rights reserved.
+
+=head1 LICENSE
+
+This program is free software and is published under the same
+terms as Perl itself.
+
+=cut
+
