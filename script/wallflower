@@ -15,7 +15,7 @@ my %option;
 
 # command-line parameters
 GetOptions( \%option, 'application=s', 'include|I=s', 'destination=s',
-    'index=s', 'help', 'manual' )
+    'index=s', 'environment=s', 'help', 'manual' )
     or pod2usage( -verbose => 1 );
 
 # simple on-line help
@@ -26,6 +26,9 @@ pod2usage( -verbose => 2 ) if $option{manual};
 my $path_sep = $Config::Config{path_sep} || ';';
 unshift @INC, split /\Q$path_sep\E/, $option{include}
     if defined $option{include};
+
+# setup the Plack environment
+$ENV{PLACK_ENV} = $option{environment} || 'deployment';
 
 # load the application
 die "No application defined" if !defined $option{application};
