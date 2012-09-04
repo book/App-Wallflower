@@ -37,8 +37,8 @@ my $app = Plack::Util::load_psgi( $option{application} );
 # Wallflower hits the stage
 my $wf = App::Wallflower->new(
     application => $app,
-    ( destination => $option{destination} ) x !!$option{destination},
-    ( index       => $option{index} ) x !!$option{index},
+    ( destination => $option{destination} )x!! $option{destination},
+    ( index       => $option{index}       )x!! $option{index},
 );
 
 # I'm just hanging on to my friend's purse
