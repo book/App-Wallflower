@@ -4,8 +4,6 @@ use strict;
 use warnings;
 
 use Plack::Util ();
-use File::Spec  ();
-use File::Path qw( mkpath );
 use Path::Class;
 use URI;
 use Carp;
@@ -20,7 +18,7 @@ for my $attr (qw( application destination env index )) {
 sub new {
     my ( $class, %args ) = @_;
     my $self = bless {
-        destination => File::Spec->curdir,
+        destination => Path::Class::Dir->new(),    # File::Spec->curdir
         env         => {},
         index       => 'index.html',
         %args,
@@ -102,7 +100,7 @@ sub get {
 
         # get a file to save the content in
         my $dir = ( $file = $self->target($uri) )->dir;
-        mkpath $dir if !-e $dir;
+        $dir->mkpath if !-e $dir;
         open my $fh, '>', $file or die "Can't open $file for writing: $!";
 
         # copy content to the file
