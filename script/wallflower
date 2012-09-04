@@ -30,13 +30,9 @@ unshift @INC, split /\Q$path_sep\E/, $option{include}
 # setup the Plack environment
 $ENV{PLACK_ENV} = $option{environment} || 'deployment';
 
-# load the application
-die "No application defined" if !defined $option{application};
-my $app = Plack::Util::load_psgi( $option{application} );
-
 # Wallflower hits the stage
 my $wf = App::Wallflower->new(
-    application => $app,
+    application => Plack::Util::load_psgi( $option{application} ),
     ( destination => $option{destination} )x!! $option{destination},
     ( index       => $option{index}       )x!! $option{index},
 );
