@@ -8,6 +8,7 @@ use File::Spec  ();
 use File::Path qw( mkpath );
 use Path::Class;
 use URI;
+use Carp;
 
 # quick accessors
 for my $attr (qw( application destination env index )) {
@@ -18,12 +19,19 @@ for my $attr (qw( application destination env index )) {
 # create a new instance
 sub new {
     my ( $class, %args ) = @_;
-    return bless {
-        env         => {},
+    my $self = bless {
         destination => File::Spec->curdir,
+        env         => {},
         index       => 'index.html',
         %args,
     }, $class;
+
+    # some basic parameter checking
+    croak "application is required" if !defined $self->application;
+    croak "destination is invalid"
+        if !-e $self->destination || !-d $self->destination;
+
+    return $self;
 }
 
 # url -> file converter
