@@ -8,6 +8,7 @@ use File::Basename ();
 use File::Path 'mkpath';
 use Cwd qw( realpath );
 
+use Plack::Util ();
 use App::Wallflower;
 
 my %option;
@@ -28,12 +29,7 @@ unshift @INC, split /\Q$path_sep\E/, $option{include}
 
 # load the application
 die "No application defined" if !defined $option{application};
-my $app;
-if ( not $app = do $option{application} ) {
-    die "Couldn't parse $option{application}: $@" if $@;
-    die "Couldn't do $option{application}: $!"    if !defined $app;
-    die "Couldn't run $option{application}"       if !$app;
-}
+my $app = Plack::Util::load_psgi( $option{application} );
 
 # Wallflower hits the stage
 my $wf = App::Wallflower->new(
