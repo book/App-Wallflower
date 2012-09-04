@@ -37,9 +37,9 @@ sub target {
     my ( $self, $uri ) = @_;
 
     # absolute paths have the empty string as their first path_segment
-    my (undef, @segments) = $uri->path_segments;
+    my ( undef, @segments ) = $uri->path_segments;
 
-    # assume directory
+    # assume directory if the last segment has no extension
     push @segments, $self->index if $segments[-1] !~ /\./;
 
     # generate target file name
