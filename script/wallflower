@@ -35,7 +35,6 @@ my $wf = App::Wallflower->new(
 );
 
 # I'm just hanging on to my friend's purse
-my $log;
 while (<>) {
 
     # ignore blank lines and comments
@@ -43,20 +42,12 @@ while (<>) {
     chomp;
 
     # get the response
-    my $url      = $_;
-    my $response = $wf->get($url);
+    my $response = $wf->get( my $url = $_ );
 
-    my ( $status, $file ) = @{$response}[ 0, 2 ];
-    $log = "$status $url";
-
-    if ($file) {
-        my $bytes = -s $file;
-        $log .= " => $file [$bytes]";
+    if ( !$option{quiet} ) {
+        my ( $status, $file ) = @{$response}[ 0, 2 ];
+        print "$status $url", $file && ( " => $file [", -s $file, ']' ), "\n";
     }
-}
-continue {
-    print "$log\n" if $log && !$option{quiet};
-    $log = '';
 }
 
 __END__
