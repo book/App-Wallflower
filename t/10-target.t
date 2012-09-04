@@ -19,7 +19,10 @@ plan tests => scalar @tests;
 # pick up a possible destination directory
 my $dir = File::Spec->tmpdir;
 
-my $wallflower = App::Wallflower->new( destination => $dir );
+my $wallflower = App::Wallflower->new(
+    destination => $dir,
+    application => sub { },    # dummy
+);
 
 for my $t (@tests) {
     my ( $uri, $file ) = @$t;
