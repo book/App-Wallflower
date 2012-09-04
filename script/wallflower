@@ -8,52 +8,39 @@ use File::Basename ();
 use File::Path 'mkpath';
 use Cwd qw( realpath );
 
-# must cleanup the dance floor long before Dancer starts moving
+use App::Wallflower;
+
 my %option;
 
-BEGIN {
+# command-line parameters
+GetOptions( \%option, 'application=s', 'include|I=s', 'destination=s',
+    'index=s', 'help', 'manual' )
+    or pod2usage( -verbose => 1 );
 
-    # some defaults
-    %option = (index => 'index.html');
+# simple on-line help
+pod2usage( -verbose => 1 ) if $option{help};
+pod2usage( -verbose => 2 ) if $option{manual};
 
-    # command-line parameters
-    GetOptions(
-        \%option,        'application=s', 'include|I=s', 'environment=s',
-        'destination=s', 'index=s',       'log=s',       'vhost=s',
-        'help',          'manual'
-    ) or pod2usage(-verbose => 1);
+# add include dirs to @INC
+my $path_sep = $Config::Config{path_sep} || ';';
+unshift @INC, split /\Q$path_sep\E/, $option{include}
+    if defined $option{include};
 
-    # simple on-line help
-    pod2usage(-verbose => 1) if $option{help};
-    pod2usage(-verbose => 2) if $option{manual};
-
-    # add include dirs to @INC
-    my $path_sep = $Config::Config{path_sep} || ';';
-    unshift @INC, split /\Q$path_sep\E/, $option{include}
-      if defined $option{include};
-
-    # load the application
-    die "no app" if !defined $option{application};
-    eval "use $option{application}; 1;"
-      or die "Unable to load application '$option{application}': $@";
-
-    # compute the location of the application
-    (my $module = $option{application} . '.pm') =~ s<::></>;
-    $ENV{DANCER_APPDIR} ||= realpath(
-        File::Spec->catdir(File::Basename::dirname($INC{$module}), '..'));
+# load the application
+die "No application defined" if !defined $option{application};
+my $app;
+if ( not $app = do $option{application} ) {
+    die "Couldn't parse $option{application}: $@" if $@;
+    die "Couldn't do $option{application}: $!"    if !defined $app;
+    die "Couldn't run $option{application}"       if !$app;
 }
 
-# Dancer hits the stage
-use Dancer;
-use Dancer::Handler;
-
-set environment => $option{environment} || 'production';
-set log         => $option{log}         || 'warning';
-
-# some basic verification
-my $wwwdocs = $option{destination};
-die "Destination not defined" if !defined $wwwdocs;
-die "Invalid destination '$wwwdocs'" if !-e $wwwdocs || !-d $wwwdocs;
+# Wallflower hits the stage
+my $wf = App::Wallflower->new(
+    application => $app,
+    ( destination => $option{destination} ) x !!$option{destination},
+    ( index       => $option{index} ) x !!$option{index},
+);
 
 # I'm just hanging on to my friend's purse
 my $log;
@@ -63,74 +50,15 @@ while (<>) {
     next if /^\s*(#|$)/;
     chomp;
 
-    # default values
-    my $url = URI->new($_);
-    my ($status, $file, $bytes) = (500, '-', '-');
+    # get the response
+    my $url      = $_;
+    my $response = $wf->get($url);
+
+    my ( $status, $file ) = @{$response}[ 0, 2 ];
     $log = "$status $url";
 
-    # require an absolute path
-    next if $url->path !~ /^\//;
-
-    # fake a minimal environment
-    local $ENV{SERVER_NAME} = 'localhost';
-    local $ENV{SERVER_PORT} = '80';
-    local $ENV{HTTP_HOST} = eval { $url->host } || $option{vhost}
-      if defined $option{vhost};
-
-    # create a new request object
-    # strip everything but the path
-    my $request = Dancer::Request->new_for_request(GET => $url->path);
-    $request->headers(
-        HTTP::Headers->new(
-            Accept => '*/*',
-            $url->can('host_port') ? (Host => $url->host_port) : (),
-        )
-    );
-
-    # obtain a response
-    my $response = Dancer::Handler->handle_request($request);
-    ($status, my $content) = @{$response}[0, 2];
-    $log = "$status $url";
-
-    # save successes to the appropriate file
-    if ($status eq '200') {
-
-        # absolute paths have the empty string as their first path_segment
-        my (undef, @segments) = $url->path_segments;
-
-        # create a vhost directory if required
-        unshift @segments, eval { $url->host } || $option{vhost}
-          if defined $option{vhost};
-
-        # assume directory
-        push @segments, $option{index} if $segments[-1] !~ /\./;
-
-        # generate target file name
-        my $file = File::Spec->catfile($wwwdocs, @segments);
-        pop @segments;
-        my $dir = File::Spec->catdir($wwwdocs, @segments);
-
-        # ensure the subdirectory exists
-        mkpath $dir if !-e $dir;
-        open my $fh, '>', $file or die "Can't open $file for writing: $!";
-
-        # copy content to the file
-        if (ref $content eq 'ARRAY') {
-            print $fh @$content;
-        }
-        elsif (ref $content eq 'GLOB') {
-            print {$fh} <$content>;
-        }
-        elsif (eval { $content->can('getlines') }) {
-            print {$fh} $content->getlines;
-        }
-        else {
-            die "Don't know how to handle $content";
-        }
-
-        # finish
-        close $fh;
-        $bytes = -s $file;
+    if ($file) {
+        my $bytes = -s $file;
         $log .= " => $file [$bytes]";
     }
 }
