@@ -4,9 +4,6 @@ use warnings;
 use Getopt::Long;
 use Pod::Usage;
 use Config;
-use File::Basename ();
-use File::Path 'mkpath';
-use Cwd qw( realpath );
 
 use Plack::Util ();
 use App::Wallflower;
