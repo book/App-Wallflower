@@ -152,6 +152,19 @@ but not saved.
 
 Philippe Bruhat (BooK)
 
+=head1 ACKNOWLEDGEMENTS
+
+L<wallflower> started as a neat idea in a discussion between Marc
+Chantreux, Alexis Sukrieh, Franck Cuny and myself in the hallway of
+OSDC.fr (L<http://osdc.fr/>) 2010, after Alexis' talk about L<Dancer>.
+
+Because a good pun should never be wasted, a first version of the
+program has been included in L<Dancer> for a while. Since it wasn't
+maintained, it has now been removed.
+
+L<wallflower> treats all L<Plack> applications equally, even if the
+first version of the program was targetting L<Dancer> only.
+
 =head1 COPYRIGHT
 
 Copyright 2010-2012 Philippe Bruhat (BooK), all rights reserved.
