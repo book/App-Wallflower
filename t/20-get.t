@@ -30,7 +30,7 @@ push @tests, [
         'index.html',
         'Hello, World!'
     ],
-    [   URI->new( '/index.htm' ) => 200,
+    [   URI->new('/index.htm') => 200,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
         'index.htm',
         'Hello, World!'
@@ -70,12 +70,13 @@ push @tests, [
         [   200,
             [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
             do {
+
                 package Clange;
                 sub new { bless [ 'Hello,', ' ', 'World!' ] }
-                sub getline { shift @{$_[0]} }
-                sub close {}
+                sub getline { shift @{ $_[0] } }
+                sub close   { }
                 __PACKAGE__->new();
-            }
+                }
         ];
     },
     [   '/' => 200,
