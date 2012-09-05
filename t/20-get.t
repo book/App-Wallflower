@@ -85,6 +85,34 @@ push @tests, [
     ],
 ];
 
+push @tests, [
+    'status in the URL',
+    tempdir( CLEANUP => 1 ),
+    sub {
+        my $env = shift;
+        my ($status) = $env->{REQUEST_URI} =~ m{/(\d\d\d)$}g;
+        $status ||= 404;
+        [   $status,
+            [   'Content-Type'   => 'text/plain',
+                'Content-Length' => length $status
+            ],
+            [$status]
+        ];
+    },
+    [   "/200" => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 3 ],
+        File::Spec->catfile( 200, 'index.html' ), 200
+    ],
+    [   "/403" => 403,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 3 ],
+        '', ''
+    ],
+    [   "/blah" => 404,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 3 ],
+        '', ''
+    ],
+];
+
 plan tests => sum map 2 * ( @$_ - 3 ), @tests;
 
 for my $t (@tests) {
