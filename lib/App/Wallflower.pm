@@ -120,7 +120,7 @@ sub get {
             $content->close;
         }
         else {
-            die "Don't know how to handle $content";
+            die "Don't know how to handle body: $content";
         }
 
         # finish
