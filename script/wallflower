@@ -150,8 +150,7 @@ Chantreux, Alexis Sukrieh, Franck Cuny and myself in the hallway of
 OSDC.fr (L<http://osdc.fr/>) 2010, after Alexis' talk about L<Dancer>.
 
 Because a good pun should never be wasted, a first version of the
-program has been included in L<Dancer> for a while. Since it wasn't
-maintained, it has now been removed.
+program has been included in L<Dancer> since version 1.3000_01.
 
 L<wallflower> treats all L<Plack> applications equally, even if the
 first version of the program was targetting L<Dancer> only.
