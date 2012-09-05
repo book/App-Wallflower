@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use File::Temp qw( tempdir );
 use List::Util qw( sum );
+use URI;
 use App::Wallflower;
 
 # setup test data
@@ -27,6 +28,11 @@ push @tests, [
     [   '/' => 200,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
         'index.html',
+        'Hello, World!'
+    ],
+    [   URI->new( '/index.htm' ) => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        'index.htm',
         'Hello, World!'
     ],
     [ 'wrong' => 500, [], '', '' ],
