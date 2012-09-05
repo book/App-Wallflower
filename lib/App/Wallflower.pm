@@ -8,6 +8,8 @@ use Path::Class;
 use URI;
 use Carp;
 
+our $VERSION = '1.000';
+
 # quick accessors
 for my $attr (qw( application destination env index )) {
     no strict 'refs';

@@ -1,0 +1,7 @@
+Revision history for App-Wallflower
+
+1.000 Wed Sep  5 2012
+        - converted the Dancer-specific wallflower into
+          one that supports any PSGI/Plack application
+        - 94% test coverage
+
