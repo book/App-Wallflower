@@ -110,8 +110,12 @@ sub get {
         elsif ( ref $content eq 'GLOB' ) {
             print {$fh} <$content>;
         }
-        elsif ( eval { $content->can('getlines') } ) {
-            print {$fh} $content->getlines;
+        elsif ( eval { $content->can('getline') } ) {
+            local $/ = \8192;
+            while ( defined( my $line = $content->getline ) ) {
+                print {$fh} $line;
+            }
+            $content->close;
         }
         else {
             die "Don't know how to handle $content";
