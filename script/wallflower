@@ -152,6 +152,11 @@ OSDC.fr (L<http://osdc.fr/>) 2010, after Alexis' talk about L<Dancer>.
 Because a good pun should never be wasted, a first version of the
 program has been included in L<Dancer> since version 1.3000_01.
 
+The idea for L<App::Wallflower> owes a lot to Vincent Pit who, while
+I was talking about L<wallflower> and L<Dancer> with Marc on IRC in
+January 2011, noted that this file generation generation scheme had
+nothing to do with L<Dancer> and much more with L<Plack>.
+
 L<wallflower> treats all L<Plack> applications equally, even if the
 first version of the program was targetting L<Dancer> only.
 
