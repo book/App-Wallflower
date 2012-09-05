@@ -36,6 +36,11 @@ push @tests, [
         'Hello, World!'
     ],
     [ 'wrong' => 500, [], '', '' ],
+    [   '/klonk/' => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        File::Spec->catfile( 'klonk', 'index.html' ),
+        'Hello, World!'
+    ],
 ];
 
 push @tests, [
