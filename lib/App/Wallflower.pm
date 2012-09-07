@@ -38,6 +38,9 @@ sub new {
 sub target {
     my ( $self, $uri ) = @_;
 
+    # the URI must have a path
+    croak "$uri has an empty path" if !length $uri->path;
+
     # absolute paths have the empty string as their first path_segment
     my @segments = $uri->path_segments;
     croak "$uri is not an absolute URI" if length( shift @segments );

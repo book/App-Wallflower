@@ -43,7 +43,10 @@ my @tests_get = (
 );
 
 my @tests_uri = (
-    [ 'thunk', 'relative URI', qr/^thunk is not an absolute URI / ],
+    [ 'thunk' => 'relative URI', qr/^thunk is not an absolute URI / ],
+    [   'http://zlott' => 'URI without path',
+        qr{^http://zlott has an empty path }
+    ],
 );
 
 plan tests => 2 * @tests_new + 3 * @tests_get + 2 * @tests_uri;
