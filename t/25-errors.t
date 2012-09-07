@@ -42,7 +42,11 @@ my @tests_get = (
     ],
 );
 
-plan tests => 2 * @tests_new + 3 * @tests_get;
+my @tests_uri = (
+    [ 'thunk', 'relative URI', qr/^thunk is not an absolute URI / ],
+);
+
+plan tests => 2 * @tests_new + 3 * @tests_get + 2 * @tests_uri;
 
 for my $t (@tests_new) {
     my ( $args, $desc, $re ) = @$t;
@@ -57,7 +61,16 @@ for my $t (@tests_get) {
 
     my $wf = eval { App::Wallflower->new(@$args); };
     isa_ok( $wf, 'App::Wallflower', "new( $desc )" );
-    ok( !eval { $wf->get('/'); }, "($desc)->get failed" );
+    ok( !eval { $wf->get('/'); }, "($desc)->get( / ) failed" );
+    like( $@, $re, "expected error message for $desc" );
+}
+
+for my $t (@tests_uri) {
+    my ( $uri, $desc, $re ) = @$t;
+    my $nil = sub { [ 200, [ 'Content-Length' => 0 ], [] ] };
+
+    my $wf = App::Wallflower->new( application => $nil, destination => $dir );
+    ok( !eval { $wf->get($uri); }, "nil->get( $uri ) failed" );
     like( $@, $re, "expected error message for $desc" );
 }
 
