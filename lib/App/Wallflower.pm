@@ -39,7 +39,8 @@ sub target {
     my ( $self, $uri ) = @_;
 
     # absolute paths have the empty string as their first path_segment
-    my ( undef, @segments ) = $uri->path_segments;
+    my @segments = $uri->path_segments;
+    croak "$uri is not an absolute URI" if length( shift @segments );
 
     # assume directory if the last segment has no extension
     push @segments, $self->index if $segments[-1] !~ /\./;
@@ -54,9 +55,6 @@ sub get {
     my ( $status, $headers, $file, $content ) = ( 500, [], '', '' );
 
     $uri = URI->new($uri) if !ref $uri;
-
-    # require an absolute path
-    return [ $status, $headers, $file ] if $uri->path !~ /^\//;
 
     # setup the environment
     my $env = {
