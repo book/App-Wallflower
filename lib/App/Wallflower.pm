@@ -93,9 +93,9 @@ sub get {
         ( $status, $headers, $content ) = @$res;
     }
     elsif ( ref $res eq 'CODE' ) {
-        die "Delayed response and streaming not supported yet";
+        croak "Delayed response and streaming not supported yet";
     }
-    else { die "Unknown response from application: $res"; }
+    else { croak "Unknown response from application: $res"; }
 
     # save the content to a file
     if ( $status eq '200' ) {
@@ -103,7 +103,7 @@ sub get {
         # get a file to save the content in
         my $dir = ( $file = $self->target($uri) )->dir;
         $dir->mkpath if !-e $dir;
-        open my $fh, '>', $file or die "Can't open $file for writing: $!";
+        open my $fh, '>', $file or croak "Can't open $file for writing: $!";
 
         # copy content to the file
         if ( ref $content eq 'ARRAY' ) {
@@ -122,7 +122,7 @@ sub get {
             $content->close;
         }
         else {
-            die "Don't know how to handle body: $content";
+            croak "Don't know how to handle body: $content";
         }
 
         # finish
