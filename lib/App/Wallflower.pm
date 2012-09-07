@@ -196,10 +196,21 @@ in case of success, save the result to a file, whose name is obtained
 via the C<target()> method.
 
 C<$url> may be either a string or a L<URI> object, representing an
-absolute URL (the path starts with a C</>). The scheme, host and port
+absolute URL (the path must start with a C</>). The scheme, host and port
 elements are optional. The query string will be ignored.
 
+The return value is very similar those of a L<Plack> application:
+
+   [ $status, $headers, $file ]
+
+where C<$status> and C<$headers> are those return by the application
+itself for the given C<$url>, and C<$file> is the name of the file where
+the content has been saved.
+
 =head2 target( $uri )
+
+Return the filename where the content of C<$uri> will be saved.
+The result depends on the C<destination> and C<index> attributes.
 
 Note that target assumes C<$uri> is a L<URI> object.
 
