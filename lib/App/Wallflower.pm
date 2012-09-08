@@ -45,6 +45,9 @@ sub target {
     my @segments = $uri->path_segments;
     croak "$uri is not an absolute URI" if length( shift @segments );
 
+    # URI ending with / have the empty string as their last path_segment
+    $segments[-1] = $self->index if $segments[-1] eq '';
+
     # assume directory if the last segment has no extension
     push @segments, $self->index if $segments[-1] !~ /\./;
 
