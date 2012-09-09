@@ -210,9 +210,13 @@ the content has been saved.
 =head2 target( $uri )
 
 Return the filename where the content of C<$uri> will be saved.
-The result depends on the C<destination> and C<index> attributes.
 
-Note that target assumes C<$uri> is a L<URI> object.
+The C<path> component of C<$uri> is concatenated to the C<destination>
+attribute. If the URI ends with a C</>, the C<index> attribute is appended
+to create a file path.
+
+Note that C<target()> assumes C<$uri> is a L<URI> object, and that it
+must be absolute.
 
 =head1 ACCESSORS
 
