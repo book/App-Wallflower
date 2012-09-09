@@ -13,6 +13,7 @@ my @tests = (
     [ '/awk/swoosh.css' => File::Spec->catfile(qw( awk swoosh.css )) ],
     [ '/awk/clash'      => File::Spec->catfile(qw( awk clash )) ],
     [ '/awk/clash/'     => File::Spec->catfile(qw( awk clash index.html )) ],
+    [ 'http://example.com/' => 'index.html' ],
 );
 
 my @fails = (
