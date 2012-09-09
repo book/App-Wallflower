@@ -55,8 +55,6 @@ sub target {
 # save the URL to a file
 sub get {
     my ( $self, $uri ) = @_;
-    my ( $status, $headers, $file, $content ) = ( 500, [], '', '' );
-
     $uri = URI->new($uri) if !ref $uri;
 
     # setup the environment
@@ -88,6 +86,7 @@ sub get {
     };
 
     # get the content
+    my ( $status, $headers, $file, $content ) = ( 500, [], '', '' );
     my $res = Plack::Util::run_app( $self->application, $env );
 
     if ( ref $res eq 'ARRAY' ) {
