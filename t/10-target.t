@@ -9,9 +9,10 @@ use App::Wallflower;
 my @tests = (
     [ '/'               => 'index.html' ],
     [ '/kayo/'          => File::Spec->catfile(qw( kayo index.html )) ],
-    [ '/kayo'           => File::Spec->catfile(qw( kayo index.html )) ],
+    [ '/kayo'           => 'kayo' ],
     [ '/awk/swoosh.css' => File::Spec->catfile(qw( awk swoosh.css )) ],
-    [ '/awk/clash'      => File::Spec->catfile(qw( awk clash index.html )) ],
+    [ '/awk/clash'      => File::Spec->catfile(qw( awk clash )) ],
+    [ '/awk/clash/'     => File::Spec->catfile(qw( awk clash index.html )) ],
 );
 
 plan tests => scalar @tests;

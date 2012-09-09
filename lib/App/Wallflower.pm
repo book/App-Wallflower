@@ -48,9 +48,6 @@ sub target {
     # URI ending with / have the empty string as their last path_segment
     $segments[-1] = $self->index if $segments[-1] eq '';
 
-    # assume directory if the last segment has no extension
-    push @segments, $self->index if $segments[-1] !~ /\./;
-
     # generate target file name
     return Path::Class::File->new( $self->destination, @segments );
 }

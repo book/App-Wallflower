@@ -40,6 +40,10 @@ push @tests, [
         File::Spec->catfile( 'klonk', 'index.html' ),
         'Hello, World!'
     ],
+    [   '/clunk' => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        'clunk', 'Hello, World!'
+    ],
 ];
 
 push @tests, [
@@ -101,7 +105,7 @@ push @tests, [
     },
     [   "/200" => 200,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 3 ],
-        File::Spec->catfile( 200, 'index.html' ), 200
+        '200', '200'
     ],
     [   "/403" => 403,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 3 ],
