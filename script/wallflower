@@ -156,7 +156,7 @@ after the first release of L<App::Wallflower>.
 
 The idea for L<App::Wallflower> owes a lot to Vincent Pit who, while
 I was talking about L<wallflower> and L<Dancer> with Marc on IRC in
-January 2011, noted that this file generation generation scheme had
+January 2011, noted that this file generation scheme had
 nothing to do with L<Dancer> and much more with L<Plack>.
 
 L<wallflower> treats all L<Plack> applications equally, even if the
