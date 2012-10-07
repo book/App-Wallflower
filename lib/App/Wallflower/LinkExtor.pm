@@ -85,6 +85,13 @@ returned by L<App::Wallflower>'s C<get()> method.
 
 =head1 METHODS
 
+=head2 new()
+
+Dummy constructor.
+
+The object has no attributes, therefore all methods can be called as
+class methods.
+
 =head2 links( $response, $url )
 
 Returns all links found in the response body, depending on its content type.
