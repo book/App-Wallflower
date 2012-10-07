@@ -9,6 +9,9 @@ use HTML::LinkExtor;
 # some code to obtain links to resources
 my %linkextor = (
     'text/html'                     => \&_links_from_html,
+    'text/x-server-parsed-html'     => \&_links_from_html,
+    'application/xhtml+xml'         => \&_links_from_html,
+    'application/vnd.wap.xhtml+xml' => \&_links_from_html,
     'text/css'                      => \&_links_from_css,
 );
 
