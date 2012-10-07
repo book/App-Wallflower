@@ -9,6 +9,7 @@ use HTML::LinkExtor;
 # some code to obtain links to resources
 my %linkextor = (
     'text/html'                     => \&_links_from_html,
+    'text/css'                      => \&_links_from_css,
 );
 
 sub new { bless {}, $_[0] }
@@ -35,6 +36,20 @@ sub _links_from_html {
     );
     $parser->parse_file($file);
     return @links;
+}
+
+# CSS
+my $css_regexp = qr{
+    (?:
+      \@import\s+(?:"([^"]+)"|'([^']+)')
+    | url\(([^)]+)\)
+    )
+}x;
+sub _links_from_css {
+    my ( $file, $url ) = @_;
+
+    my $content = do { local ( @ARGV, $/ ) = ($file); <> };
+    return grep defined, $content =~ /$css_regexp/gc;
 }
 
 1;
