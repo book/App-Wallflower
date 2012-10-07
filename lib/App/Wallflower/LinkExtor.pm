@@ -54,3 +54,54 @@ sub _links_from_css {
 
 1;
 
+__END__
+
+=head1 NAME
+
+App::Wallflower::LinkExtor - Basic resource link extractor for App::Wallflower
+
+=head SYNOPSIS
+
+    use App::Wallflower::LinkExtor;
+
+    # use App::Wallflower to get a response array
+    my $wf = App::Wallflower->new( application => $app, destination => $dir );
+    my $response = $wf->get($url);
+
+    # obtain links to resources linked from the document
+    my $le = App::Wallflower::LinkExtor->new();
+    my @links = $le->links( $response, $url );
+
+    # the object has no attributes, so both forms are equivalent
+    my @links = App::Wallflower::LinkExtor->links( $response, $url );
+
+=head1 DESCRIPTION
+
+This module provides a single method to be used on the data structures
+returned by L<App::Wallflower>'s C<get()> method.
+
+=head1 METHODS
+
+=head2 links( $response, $url )
+
+Returns all links found in the response body, depending on its content type.
+
+C<$response> is the array reference returned by L<App::Wallflower>'s C<get()>
+method. C<$url> is the base URI for resolving relative links, i.e. the
+original argument to C<get()>.
+
+=head1 AUTHOR
+
+Philippe Bruhat (BooK)
+
+=head1 COPYRIGHT
+
+Copyright 2012 Philippe Bruhat (BooK), all rights reserved.
+
+=head1 LICENSE
+
+This program is free software and is published under the same
+terms as Perl itself.
+
+=cut
+
