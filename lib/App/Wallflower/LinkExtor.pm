@@ -80,8 +80,8 @@ App::Wallflower::LinkExtor - Basic resource link extractor for App::Wallflower
 
 =head1 DESCRIPTION
 
-This module provides a single method to be used on the data structures
-returned by L<App::Wallflower>'s C<get()> method.
+This modules provides methods to extract links from the files
+produced by L<App::Wallflower>'s C<get()> method.
 
 =head1 METHODS
 
