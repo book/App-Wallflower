@@ -28,6 +28,13 @@ my @tests = (
         '/contact.html',
         '/img/lorem.png',
     ],
+    [   '/',
+        [   200,
+            [ 'Content-Type' => 'text/css' ],
+            File::Spec->catfile( t => 'file-01.css' )
+        ],
+        'foo.css', 'bar.css', '/img.png',
+    ],
 );
 
 plan tests => 1 + @tests;

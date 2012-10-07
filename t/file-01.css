@@ -1,0 +1,6 @@
+@import "foo.css";
+@import "bar.css";
+h1 {
+    background: url(/img.png);
+}
+
