@@ -24,6 +24,10 @@ my $path_sep = $Config::Config{path_sep} || ';';
 unshift @INC, split /\Q$path_sep\E/, $option{include}
     if defined $option{include};
 
+# application is required
+pod2usage( -verbose => 1, -message => 'Missing required option: application' )
+    if !exists $option{application};
+
 # setup the Plack environment
 $ENV{PLACK_ENV} = $option{environment} || 'deployment';
 
