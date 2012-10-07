@@ -151,6 +151,8 @@ OSDC.fr (L<http://osdc.fr/>) 2010, after Alexis' talk about L<Dancer>.
 
 Because a good pun should never be wasted, a first version of the
 program has been included in L<Dancer> since version 1.3000_01.
+Since it wasn't maintained, it has been removed in version 1.3110,
+after the first release of L<App::Wallflower>.
 
 The idea for L<App::Wallflower> owes a lot to Vincent Pit who, while
 I was talking about L<wallflower> and L<Dancer> with Marc on IRC in
