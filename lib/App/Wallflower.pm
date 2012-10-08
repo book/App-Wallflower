@@ -85,6 +85,10 @@ sub get {
         'psgi.streaming' => '',
     };
 
+    # fixup URI
+    $uri->scheme('http') if !$uri->scheme;
+    $uri->host( $env->{SERVER_NAME} ) if !$uri->host;
+
     # get the content
     my ( $status, $headers, $file, $content ) = ( 500, [], '', '' );
     my $res = Plack::Util::run_app( $self->application, $env );
