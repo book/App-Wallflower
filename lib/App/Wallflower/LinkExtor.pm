@@ -37,7 +37,7 @@ sub _links_from_html {
         },
         $url
     );
-    $parser->parse_file($file);
+    $parser->parse_file("$file");
     return @links;
 }
 
@@ -51,7 +51,7 @@ my $css_regexp = qr{
 sub _links_from_css {
     my ( $file, $url ) = @_;
 
-    my $content = do { local ( @ARGV, $/ ) = ($file); <> };
+    my $content = do { local ( @ARGV, $/ ) = ("$file"); <> };
     return grep defined, $content =~ /$css_regexp/gc;
 }
 
