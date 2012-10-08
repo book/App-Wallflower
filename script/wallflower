@@ -72,6 +72,13 @@ while (<>) {
             push @queue, $le->links( $response => $url );
         }
 
+        # follow 301 Moved Permanently
+        elsif ( $status eq '301' ) {
+            require HTTP::Headers;
+            my $l
+                = HTTP::Headers->new( @$headers )->header('Location');
+            unshift @queue, $l if $l;
+        }
     }
 }
 
