@@ -1,4 +1,4 @@
-package App::Wallflower;
+package Wallflower;
 
 use strict;
 use warnings;
@@ -7,8 +7,6 @@ use Plack::Util ();
 use Path::Class;
 use URI;
 use Carp;
-
-our $VERSION = '1.000';
 
 # quick accessors
 for my $attr (qw( application destination env index )) {
@@ -142,13 +140,13 @@ __END__
 
 =head1 NAME
 
-App::Wallflower - Class performing the moves for the wallflower program
+Wallflower - Stick Plack applications to the wallpaper
 
 =head1 SYNOPSIS
 
-    use App::Wallflower;
+    use Wallflower;
 
-    my $w = App::Wallflower->new(
+    my $w = Wallflower->new(
         application => $app, # a PSGI app
         destination => $dir, # target directory
     );
@@ -158,14 +156,14 @@ App::Wallflower - Class performing the moves for the wallflower program
 
 =head1 DESCRIPTION
 
-This module contains the core functionality of the L<wallflower> program,
-that provides user-friendly functionality.
+Given a URL and a L<Plack> application, a L<Wallflower> object will
+save the corresponding response to a file.
 
 =head1 METHODS
 
 =head2 new( %args )
 
-Create a new L<App::Wallflower> object.
+Create a new L<Wallflower> object.
 
 The parameters are:
 
