@@ -8,11 +8,13 @@ use Config;
 use Plack::Util ();
 use App::Wallflower;
 
-my %option;
+my %option = (
+    follow => 1,
+);
 
 # command-line parameters
 GetOptions( \%option, 'application=s', 'include|I=s', 'destination=s',
-    'index=s', 'environment=s', 'quiet', 'help', 'manual' )
+    'index=s', 'environment=s', 'follow!', 'quiet', 'help', 'manual' )
     or pod2usage( -verbose => 1 );
 
 # simple on-line help
@@ -34,6 +36,13 @@ my $wf = App::Wallflower->new(
     ( index       => $option{index}       )x!! $option{index},
 );
 
+# Wallflower::LinkExtor is used to get links to resources
+my $le = $option{follow} && do {
+    require App::Wallflower::LinkExtor;
+    App::Wallflower::LinkExtor->new;
+};
+my %seen;
+
 # I'm just hanging on to my friend's purse
 while (<>) {
 
@@ -41,12 +50,28 @@ while (<>) {
     next if /^\s*(#|$)/;
     chomp;
 
-    # get the response
-    my $response = $wf->get( my $url = $_ );
+    my @queue = ($_);
+    while (@queue) {
 
-    if ( !$option{quiet} ) {
-        my ( $status, $file ) = @{$response}[ 0, 2 ];
-        print "$status $url", $file && ( " => $file [", -s $file, ']' ), "\n";
+        my $url = URI->new( shift @queue );
+        next if $seen{ $url->path }++;
+
+        # get the response
+        my $response = $wf->get($url);
+        my ( $status, $headers, $file ) = @$response;
+
+        # tell the world
+        if ( !$option{quiet} ) {
+            print join( ' ',
+                $status, $url->path, $file && ( '=>', $file, -s $file ) ),
+                "\n";
+        }
+
+        # get resources
+        if ( $status eq '200' && $option{follow} ) {
+            push @queue, $le->links( $response => $url );
+        }
+
     }
 }
 
@@ -69,6 +94,7 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
  --environment <name>       Plack environment (default: deployment)
  --index       <filename>   Default name for index file (default: index.html)
  --quiet                    Do not show progress
+ --follow                   Follow links in HTML, XHTML, and CSS pages
 
  --help                     Print a short online help and exit
  --manual                   Print the full manual page and exit
