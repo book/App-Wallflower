@@ -3,7 +3,7 @@ use warnings;
 use Test::More;
 use File::Temp qw( tempdir );
 use URI;
-use Wallflower::LinkExtor;
+use Wallflower::Util qw( links_from );
 
 # setup test data
 my @tests = (
@@ -37,13 +37,10 @@ my @tests = (
     ],
 );
 
-plan tests => 1 + @tests;
-
-my $le = Wallflower::LinkExtor->new();
-isa_ok( $le, 'Wallflower::LinkExtor' );
+plan tests => scalar @tests;
 
 for my $t (@tests) {
     my ( $url, $response, @expected ) = @$t;
-    is_deeply( [ $le->links( $response, $url ) ],
+    is_deeply( [ links_from( $response, $url ) ],
         \@expected, "links for $response->[2]" );
 }
