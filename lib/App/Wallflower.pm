@@ -85,11 +85,8 @@ sub run {
             my ( $status, $headers, $file ) = @$response;
 
             # tell the world
-            if ( !$quiet ) {
-                print join( ' ',
-                    $status, $url->path, $file && ( '=>', $file, -s $file ) ),
-                    "\n";
-            }
+            printf "$status %s%s\n", $url->path, $file && " => $file [${\-s $file}]"
+                if !$quiet;
 
             # obtain links to resources
             if( $status eq '200' && $follow ) {
