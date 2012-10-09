@@ -4,7 +4,7 @@ use Test::More;
 use File::Temp qw( tempdir );
 use List::Util qw( sum );
 use URI;
-use App::Wallflower;
+use Wallflower;
 
 # setup test data
 my @tests;
@@ -132,7 +132,7 @@ plan tests => sum map 2 * ( @$_ - 3 ), @tests;
 for my $t (@tests) {
     my ( $desc, $dir, $app, @urls ) = @$t;
 
-    my $wf = App::Wallflower->new(
+    my $wf = Wallflower->new(
         application => $app,
         destination => $dir,
     );
