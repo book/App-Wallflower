@@ -63,7 +63,7 @@ __END__
 
 Wallflower::LinkExtor - Basic resource link extractor for Wallflower
 
-=head SYNOPSIS
+=head1 SYNOPSIS
 
     use Wallflower::LinkExtor;
 
