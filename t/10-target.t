@@ -4,7 +4,7 @@ use Test::More;
 
 use File::Spec;
 use URI;
-use App::Wallflower;
+use Wallflower;
 
 my @tests = (
     [ '/'               => 'index.html' ],
@@ -26,7 +26,7 @@ plan tests => @tests + 2 * @fails;
 # pick up a possible destination directory
 my $dir = File::Spec->tmpdir;
 
-my $wallflower = App::Wallflower->new(
+my $wallflower = Wallflower->new(
     destination => $dir,
     application => sub { },    # dummy
 );
