@@ -1,0 +1,155 @@
+package App::Wallflower;
+
+use strict;
+use warnings;
+
+use Getopt::Long qw( GetOptionsFromArray );
+use Pod::Usage;
+use Plack::Util ();
+use Wallflower;
+use Wallflower::LinkExtor;
+
+sub new_with_options {
+    my ( $class, $args ) = @_;
+    my $input = (caller)[1];
+
+    # save previous configuration
+    my $save = Getopt::Long::Configure();
+
+    # ensure we use Getopt::Long's default configuration
+    Getopt::Long::ConfigDefaults();
+
+    # get the command-line options (modifies $args)
+    my %option = ( follow => 1, environment => 'deployment' );
+    GetOptionsFromArray(
+        $args,     \%option,        'application=s', 'destination=s',
+        'index=s', 'environment=s', 'follow!',       'quiet',
+        'help',    'manual'
+    ) or pod2usage(
+        -input   => $input,
+        -verbose => 1,
+        -exitval => 2,
+    );
+
+    # restore Getopt::Long configuration
+    Getopt::Long::Configure($save);
+
+    # simple on-line help
+    pod2usage( -verbose => 1 ) if $option{help};
+    pod2usage( -verbose => 2 ) if $option{manual};
+
+    # application is required
+    pod2usage(
+        -input   => $input,
+        -verbose => 1,
+        -exitval => 2,
+        -message => 'Missing required option: application'
+    ) if !exists $option{application};
+
+    local $ENV{PLACK_ENV} = $option{environment};
+    return bless {
+        option     => \%option,
+        args       => $args,
+        wallflower => Wallflower->new(
+            application => Plack::Util::load_psgi( $option{application} ),
+            ( destination => $option{destination} )x!! $option{destination},
+            ( index       => $option{index}       )x!! $option{index},
+        ),
+    }, $class;
+
+}
+
+sub run {
+    my ($self) = @_;
+    my ( $quiet, $follow ) = @{ $self->{option} }{qw( quiet follow )};
+    my $wallflower = $self->{wallflower};
+    my %seen;
+
+    # I'm just hanging on to my friend's purse
+    local $ENV{PLACK_ENV} = $self->{option}{environment};
+    local @ARGV = @{ $self->{args} };
+    while (<>) {
+
+        # ignore blank lines and comments
+        next if /^\s*(#|$)/;
+        chomp;
+
+        my @queue = ($_);
+        while (@queue) {
+
+            my $url = URI->new( shift @queue );
+            next if $seen{ $url->path }++;
+
+            # get the response
+            my $response = $wallflower->get($url);
+            my ( $status, $headers, $file ) = @$response;
+
+            # tell the world
+            if ( !$quiet ) {
+                print join( ' ',
+                    $status, $url->path, $file && ( '=>', $file, -s $file ) ),
+                    "\n";
+            }
+
+            # Wallflower::LinkExtor is used to get links to resources
+            if ( $status eq '200' && $follow ) {
+                push @queue,
+                    Wallflower::LinkExtor->links( $response => $url );
+            }
+
+            # follow 301 Moved Permanently
+            elsif ( $status eq '301' ) {
+                require HTTP::Headers;
+                my $l = HTTP::Headers->new(@$headers)->header('Location');
+                unshift @queue, $l if $l;
+            }
+        }
+    }
+}
+
+1;
+
+__END__
+
+=head1 NAME
+
+App::Wallflower - Class performing the moves for the wallflower program
+
+=head1 SYNOPSIS
+
+    # this is the actual code for wallflower
+    use App::Wallflower;
+    App::Wallflower->new_with_options( \@ARGV )->run;
+
+=head1 DESCRIPTION
+
+L<App::Wallflower> is a container for functions for the L<wallflower>
+program.
+
+=head1 METHODS
+
+=head2 new_with_options( \@argv )
+
+Process options in the provided array reference (modifying it),
+and return a object ready to be C<run()>.
+
+=head2 run( )
+
+Filter the URL in the files remaining from processing the options
+in C<@argv>, or from standard input if it's empty.
+
+=head1 AUTHOR
+
+Philippe Bruhat (BooK)
+
+=head1 COPYRIGHT
+
+Copyright 2010-2012 Philippe Bruhat (BooK), all rights reserved.
+
+=head1 LICENSE
+
+This program is free software and is published under the same
+terms as Perl itself.
+
+=cut
+
