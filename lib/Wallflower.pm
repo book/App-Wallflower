@@ -39,11 +39,8 @@ sub target {
     # the URI must have a path
     croak "$uri has an empty path" if !length $uri->path;
 
-    # absolute paths have the empty string as their first path_segment
-    my @segments = $uri->path_segments;
-    croak "$uri is not an absolute URI" if length( shift @segments );
-
     # URI ending with / have the empty string as their last path_segment
+    my @segments = $uri->path_segments;
     $segments[-1] = $self->index if $segments[-1] eq '';
 
     # generate target file name
@@ -54,6 +51,9 @@ sub target {
 sub get {
     my ( $self, $uri ) = @_;
     $uri = URI->new($uri) if !ref $uri;
+
+    # absolute paths have the empty string as their first path_segment
+    croak "$uri is not an absolute URI" if length +( $uri->path_segments )[0];
 
     # setup the environment
     my $env = {
