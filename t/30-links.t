@@ -3,7 +3,7 @@ use warnings;
 use Test::More;
 use File::Temp qw( tempdir );
 use URI;
-use App::Wallflower::LinkExtor;
+use Wallflower::LinkExtor;
 
 # setup test data
 my @tests = (
@@ -39,8 +39,8 @@ my @tests = (
 
 plan tests => 1 + @tests;
 
-my $le = App::Wallflower::LinkExtor->new();
-isa_ok( $le, 'App::Wallflower::LinkExtor' );
+my $le = Wallflower::LinkExtor->new();
+isa_ok( $le, 'Wallflower::LinkExtor' );
 
 for my $t (@tests) {
     my ( $url, $response, @expected ) = @$t;
