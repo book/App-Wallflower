@@ -3,7 +3,7 @@ use warnings;
 use Test::More;
 use File::Temp qw( tempdir );
 use File::Spec;
-use App::Wallflower;
+use Wallflower;
 
 my $dir = tempdir( CLEANUP => 1 );
 my $file = File::Spec->catfile( $dir, 'uggh' );
@@ -54,7 +54,7 @@ plan tests => 2 * @tests_new + 3 * @tests_get + 2 * @tests_uri;
 for my $t (@tests_new) {
     my ( $args, $desc, $re ) = @$t;
 
-    my $wf = eval { App::Wallflower->new(@$args); };
+    my $wf = eval { Wallflower->new(@$args); };
     is( $wf, undef, "new( $desc ) failed" );
     like( $@, $re, "expected error message for $desc" );
 }
@@ -62,8 +62,8 @@ for my $t (@tests_new) {
 for my $t (@tests_get) {
     my ( $args, $desc, $re ) = @$t;
 
-    my $wf = eval { App::Wallflower->new(@$args); };
-    isa_ok( $wf, 'App::Wallflower', "new( $desc )" );
+    my $wf = eval { Wallflower->new(@$args); };
+    isa_ok( $wf, 'Wallflower', "new( $desc )" );
     ok( !eval { $wf->get('/'); }, "($desc)->get( / ) failed" );
     like( $@, $re, "expected error message for $desc" );
 }
@@ -72,7 +72,7 @@ for my $t (@tests_uri) {
     my ( $uri, $desc, $re ) = @$t;
     my $nil = sub { [ 200, [ 'Content-Length' => 0 ], [] ] };
 
-    my $wf = App::Wallflower->new( application => $nil, destination => $dir );
+    my $wf = Wallflower->new( application => $nil, destination => $dir );
     ok( !eval { $wf->get($uri); }, "nil->get( $uri ) failed" );
     like( $@, $re, "expected error message for $desc" );
 }
