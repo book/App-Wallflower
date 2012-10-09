@@ -1,10 +1,14 @@
-package Wallflower::LinkExtor;
+package Wallflower::Util;
 
 use strict;
 use warnings;
 
+use Exporter;
 use HTTP::Headers;
 use HTML::LinkExtor;
+
+our @ISA = qw( Exporter );
+our @EXPORT_OK = qw( links_from );
 
 # some code to obtain links to resources
 my %linkextor = (
@@ -15,10 +19,8 @@ my %linkextor = (
     'text/css'                      => \&_links_from_css,
 );
 
-sub new { bless {}, $_[0] }
-
-sub links {
-    my ( $self, $response, $url ) = @_;
+sub links_from {
+    my ( $response, $url ) = @_;
     my $le = $linkextor{ HTTP::Headers->new( @{ $response->[1] } )
             ->content_type };
     return if !$le;
@@ -61,38 +63,28 @@ __END__
 
 =head1 NAME
 
-Wallflower::LinkExtor - Basic resource link extractor for Wallflower
+Wallflower::Util - Utility functions for Wallflower
 
 =head1 SYNOPSIS
 
-    use Wallflower::LinkExtor;
+    use Wallflower;
+    use Wallflower::Util qw( links_from );
 
     # use Wallflower to get a response array
     my $wf = Wallflower->new( application => $app, destination => $dir );
     my $response = $wf->get($url);
 
     # obtain links to resources linked from the document
-    my $le = Wallflower::LinkExtor->new();
-    my @links = $le->links( $response, $url );
-
-    # the object has no attributes, so both forms are equivalent
-    my @links = Wallflower::LinkExtor->links( $response, $url );
+    my @links = links_from( $response, $url );
 
 =head1 DESCRIPTION
 
 This modules provides methods to extract links from the files
 produced by L<Wallflower>'s C<get()> method.
 
-=head1 METHODS
+=head1 FUNCTIONS
 
-=head2 new()
-
-Dummy constructor.
-
-The object has no attributes, therefore all methods can be called as
-class methods.
-
-=head2 links( $response, $url )
+=head2 links_from( $response, $url )
 
 Returns all links found in the response body, depending on its content type.
 
