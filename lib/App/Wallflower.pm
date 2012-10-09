@@ -23,8 +23,8 @@ sub new_with_options {
     my %option = ( follow => 1, environment => 'deployment' );
     GetOptionsFromArray(
         $args,     \%option,        'application=s', 'destination=s',
-        'index=s', 'environment=s', 'follow!',       'quiet',
-        'help',    'manual'
+        'index=s', 'environment=s', 'follow!',       'list',
+        'quiet',   'help',          'manual'
     ) or pod2usage(
         -input   => $input,
         -verbose => 1,
@@ -50,6 +50,7 @@ sub new_with_options {
     return bless {
         option     => \%option,
         args       => $args,
+        seen       => {},
         wallflower => Wallflower->new(
             application => Plack::Util::load_psgi( $option{application} ),
             ( destination => $option{destination} )x!! $option{destination},
@@ -61,44 +62,55 @@ sub new_with_options {
 
 sub run {
     my ($self) = @_;
-    my ( $quiet, $follow ) = @{ $self->{option} }{qw( quiet follow )};
-    my $wallflower = $self->{wallflower};
-    my %seen;
+    ( my $args, $self->{args} ) = ( $self->{args}, [] );
+    my $method = $self->{option}{list} ? 'process_queue' : 'process_args';
+    $self->$method(@$args);
+}
 
-    # I'm just hanging on to my friend's purse
-    local $ENV{PLACK_ENV} = $self->{option}{environment};
-    local @ARGV = @{ $self->{args} };
+sub process_args {
+    my $self = shift;
+    local @ARGV = @_;
     while (<>) {
 
         # ignore blank lines and comments
         next if /^\s*(#|$)/;
         chomp;
 
-        my @queue = ($_);
-        while (@queue) {
+        $self->process_queue("$_");
+    }
+}
 
-            my $url = URI->new( shift @queue );
-            next if $seen{ $url->path }++;
+sub process_queue {
+    my ( $self, @queue ) = @_;
+    my ( $quiet, $follow, $seen )
+        = @{ $self->{option} }{qw( quiet follow seen )};
+    my $wallflower = $self->{wallflower};
 
-            # get the response
-            my $response = $wallflower->get($url);
-            my ( $status, $headers, $file ) = @$response;
+    # I'm just hanging on to my friend's purse
+    local $ENV{PLACK_ENV} = $self->{option}{environment};
+    while (@queue) {
 
-            # tell the world
-            printf "$status %s%s\n", $url->path, $file && " => $file [${\-s $file}]"
-                if !$quiet;
+        my $url = URI->new( shift @queue );
+        next if $seen->{ $url->path }++;
 
-            # obtain links to resources
-            if( $status eq '200' && $follow ) {
-                push @queue, links_from( $response => $url )
-            }
+        # get the response
+        my $response = $wallflower->get($url);
+        my ( $status, $headers, $file ) = @$response;
 
-            # follow 301 Moved Permanently
-            elsif ( $status eq '301' ) {
-                require HTTP::Headers;
-                my $l = HTTP::Headers->new(@$headers)->header('Location');
-                unshift @queue, $l if $l;
-            }
+        # tell the world
+        printf "$status %s%s\n", $url->path, $file && " => $file [${\-s $file}]"
+            if !$quiet;
+
+        # obtain links to resources
+        if ( $status eq '200' && $follow ) {
+            push @queue, links_from( $response => $url );
+        }
+
+        # follow 301 Moved Permanently
+        elsif ( $status eq '301' ) {
+            require HTTP::Headers;
+            my $l = HTTP::Headers->new(@$headers)->header('Location');
+            unshift @queue, $l if $l;
         }
     }
 }
