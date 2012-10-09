@@ -1,4 +1,4 @@
-package App::Wallflower::LinkExtor;
+package Wallflower::LinkExtor;
 
 use strict;
 use warnings;
@@ -61,27 +61,27 @@ __END__
 
 =head1 NAME
 
-App::Wallflower::LinkExtor - Basic resource link extractor for App::Wallflower
+Wallflower::LinkExtor - Basic resource link extractor for Wallflower
 
 =head SYNOPSIS
 
-    use App::Wallflower::LinkExtor;
+    use Wallflower::LinkExtor;
 
-    # use App::Wallflower to get a response array
-    my $wf = App::Wallflower->new( application => $app, destination => $dir );
+    # use Wallflower to get a response array
+    my $wf = Wallflower->new( application => $app, destination => $dir );
     my $response = $wf->get($url);
 
     # obtain links to resources linked from the document
-    my $le = App::Wallflower::LinkExtor->new();
+    my $le = Wallflower::LinkExtor->new();
     my @links = $le->links( $response, $url );
 
     # the object has no attributes, so both forms are equivalent
-    my @links = App::Wallflower::LinkExtor->links( $response, $url );
+    my @links = Wallflower::LinkExtor->links( $response, $url );
 
 =head1 DESCRIPTION
 
 This modules provides methods to extract links from the files
-produced by L<App::Wallflower>'s C<get()> method.
+produced by L<Wallflower>'s C<get()> method.
 
 =head1 METHODS
 
@@ -96,7 +96,7 @@ class methods.
 
 Returns all links found in the response body, depending on its content type.
 
-C<$response> is the array reference returned by L<App::Wallflower>'s C<get()>
+C<$response> is the array reference returned by L<Wallflower>'s C<get()>
 method. C<$url> is the base URI for resolving relative links, i.e. the
 original argument to C<get()>.
 
