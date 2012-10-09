@@ -7,7 +7,7 @@ use Getopt::Long qw( GetOptionsFromArray );
 use Pod::Usage;
 use Plack::Util ();
 use Wallflower;
-use Wallflower::LinkExtor;
+use Wallflower::Util qw( links_from );
 
 sub new_with_options {
     my ( $class, $args ) = @_;
@@ -91,10 +91,9 @@ sub run {
                     "\n";
             }
 
-            # Wallflower::LinkExtor is used to get links to resources
-            if ( $status eq '200' && $follow ) {
-                push @queue,
-                    Wallflower::LinkExtor->links( $response => $url );
+            # obtain links to resources
+            if( $status eq '200' && $follow ) {
+                push @queue, links_from( $response => $url )
             }
 
             # follow 301 Moved Permanently
