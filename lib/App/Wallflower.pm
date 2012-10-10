@@ -63,11 +63,11 @@ sub new_with_options {
 sub run {
     my ($self) = @_;
     ( my $args, $self->{args} ) = ( $self->{args}, [] );
-    my $method = $self->{option}{list} ? 'process_queue' : 'process_args';
+    my $method = $self->{option}{list} ? '_process_queue' : '_process_args';
     $self->$method(@$args);
 }
 
-sub process_args {
+sub _process_args {
     my $self = shift;
     local @ARGV = @_;
     while (<>) {
@@ -76,11 +76,11 @@ sub process_args {
         next if /^\s*(#|$)/;
         chomp;
 
-        $self->process_queue("$_");
+        $self->_process_queue("$_");
     }
 }
 
-sub process_queue {
+sub _process_queue {
     my ( $self, @queue ) = @_;
     my ( $quiet, $follow, $seen )
         = @{ $self->{option} }{qw( quiet follow seen )};
