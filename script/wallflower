@@ -23,6 +23,7 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
  --environment <name>       Plack environment (default: deployment)
  --index       <filename>   Default name for index file (default: index.html)
  --no-follow                Do not follow links in HTML and CSS pages
+ --filter                   Consider arguments as files containing URL
  --quiet                    Do not show progress
  --include     <path>       Library paths to include
 
@@ -103,6 +104,18 @@ The default option is to follow links.
 
 =item *
 
+B<--filter>, B<--files>
+
+Behave as a filter: all remaining arguments on the command-line are
+considered as files containing URL to process (one per line).
+If no arguments are provided, will read from standard input.
+
+The normal behaviour (without B<--filter>) is to consider the remaining
+arguments as a list of URL. If no arguments are provided, assume the
+only URL is C</>.
+
+=item *
+
 B<--quiet>
 
 Hide all output.
@@ -145,7 +158,7 @@ The complete list of URL needed to view the site is:
 
 Passing this list to B<wallflower> gives the following result:
 
-    $ wallflower -a bin/app.pl -d /tmp urls.txt
+    $ wallflower -a bin/app.pl -d /tmp -f urls.txt
     200 / => /tmp/output/index.html [5367]
     200 /404.html => /tmp/output/404.html [499]
     200 /500.html => /tmp/output/500.html [510]

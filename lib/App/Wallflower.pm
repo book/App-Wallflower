@@ -25,7 +25,7 @@ sub new_with_options {
         $args,           \%option,
         'application=s', 'destination|directory=s',
         'index=s',       'environment=s',
-        'follow!',       'list',
+        'follow!',       'filter|files|F',
         'quiet',         'include|INC=s@',
         'help',          'manual',
     ) or pod2usage(
@@ -72,7 +72,7 @@ sub new_with_options {
 sub run {
     my ($self) = @_;
     ( my $args, $self->{args} ) = ( $self->{args}, [] );
-    my $method = $self->{option}{list} ? '_process_queue' : '_process_args';
+    my $method = $self->{option}{filter} ? '_process_args' : '_process_queue';
     $self->$method(@$args);
 }
 
