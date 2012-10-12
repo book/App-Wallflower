@@ -12,5 +12,5 @@ use_ok($_)
     for reverse sort map { s!/!::!g; s/\.pm$//; s/^blib::lib:://; $_ }
     @modules;
 
-diag("Tested App::Wallflower $App::Wallflower::VERSION, Perl $], $^X" );
+diag("Tested Wallflower $Wallflower::VERSION, Perl $], $^X" );
 
