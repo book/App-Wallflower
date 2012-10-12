@@ -176,6 +176,11 @@ appended.
 Any URL resulting in a status different than C<200> will be logged,
 but not saved.
 
+Only the path section is used to fetch the response, which means that URL
+that pointing to other sites will likely result in C<404> (or point to
+a page that exist in the application, and therefore fetch the I<local>
+response).
+
 =head1 AUTHOR
 
 Philippe Bruhat (BooK)
