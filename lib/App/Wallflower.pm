@@ -22,9 +22,12 @@ sub new_with_options {
     # get the command-line options (modifies $args)
     my %option = ( follow => 1, environment => 'deployment' );
     GetOptionsFromArray(
-        $args,     \%option,        'application=s', 'destination=s',
-        'index=s', 'environment=s', 'follow!',       'list',
-        'quiet',   'help',          'manual'
+        $args,           \%option,
+        'application=s', 'destination|directory=s',
+        'index=s',       'environment=s',
+        'follow!',       'list',
+        'quiet',         'include|INC=s@',
+        'help',          'manual',
     ) or pod2usage(
         -input   => $input,
         -verbose => 1,
@@ -46,7 +49,13 @@ sub new_with_options {
         -message => 'Missing required option: application'
     ) if !exists $option{application};
 
+    # include option
+    my $path_sep = $Config::Config{path_sep} || ';';
+    $option{inc} = [ split /\Q$path_sep\E/, join $path_sep,
+        @{ $option{include} || [] } ];
+
     local $ENV{PLACK_ENV} = $option{environment};
+    local @INC = ( @INC, @{ $option{inc} } );
     return bless {
         option     => \%option,
         args       => $args,
@@ -88,6 +97,8 @@ sub _process_queue {
 
     # I'm just hanging on to my friend's purse
     local $ENV{PLACK_ENV} = $self->{option}{environment};
+    local @INC = ( @INC, @{ $self->{option}{inc} } );
+    @queue = ('/') if !@queue;
     while (@queue) {
 
         my $url = URI->new( shift @queue );
