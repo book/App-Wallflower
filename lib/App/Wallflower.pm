@@ -152,10 +152,15 @@ program.
 Process options in the provided array reference (modifying it),
 and return a object ready to be C<run()>.
 
+See L<wallflower> for the list of options and their usage.
+
 =head2 run( )
 
-Filter the URL in the files remaining from processing the options
-in C<@argv>, or from standard input if it's empty.
+Make L<wallflower> dance.
+
+Process the remaining arguments according to the options,
+i.e. either consider them as URL to save, or as files
+containing URL to save.
 
 =head1 AUTHOR
 
