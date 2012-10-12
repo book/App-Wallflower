@@ -7,6 +7,7 @@ WriteMakefile(
     NAME         => 'App::Wallflower',
     LICENSE      => 'perl',
     AUTHOR       => 'Philippe Bruhat (BooK) <book@cpan.org>',
+    ABSTRACT_FROM => 'script/wallflower',
     VERSION_FROM => 'lib/Wallflower.pm',
     PREREQ_PM    => {
         'Path::Class' => 0,

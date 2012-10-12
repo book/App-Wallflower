@@ -7,11 +7,13 @@ my $builder = Module::Build->new(
     module_name       => 'App::Wallflower',
     license           => 'perl',
     dist_author       => 'Philippe Bruhat (BooK) <book@cpan.org>',
+    dist_abstract     => "Sorry I can't dance, I'm hanging to my friend's purse",
     dist_version_from => 'lib/Wallflower.pm',
     requires          => {
         'Path::Class' => 0,
         'Plack'       => 0,
         'URI'         => 0,
+        'HTML::LinkExtor' => 0,
     },
     build_requires => {
         'Test::More' => 0,
