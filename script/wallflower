@@ -17,14 +17,14 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
 
 =head1 OPTIONS
 
- --application <name>       Name of the .psgi application file
+ --application <app>        Name of the .psgi application file
  --destination <path>       Destination directory for the static files
 
- --include     <path>       Library paths to include
  --environment <name>       Plack environment (default: deployment)
  --index       <filename>   Default name for index file (default: index.html)
+ --no-follow                Do not follow links in HTML and CSS pages
  --quiet                    Do not show progress
- --follow                   Follow links in HTML, XHTML, and CSS pages
+ --include     <path>       Library paths to include
 
  --help                     Print a short online help and exit
  --manual                   Print the full manual page and exit
@@ -58,6 +58,74 @@ from their query strings, turn them into C<GET> requests and saves the
 response body to a file whose name matches the request pathinfo.
 
 B<wallflower> is not a generic offline browsing tool.
+
+=head2 COMMAND-LINE OPTIONS
+
+In typical L<Getopt::Long> fashion, all options can be shortened,
+so long as the shortened version is unambiguous.
+
+=over 4
+
+=item *
+
+B<--application> I<application>
+
+The path to the Plack application to run.
+This option is required.
+
+=item *
+
+B<--destination> I<path>, B<--directory> I<path>
+
+The directory where files will be saved.
+This option is required, and the directory must exist.
+
+=item *
+
+B<--environment> I<name>
+
+Define the Plack environment to run the application in.
+The default environment is C<deployment>.
+
+=item *
+
+B<--index> I<filename>
+
+The default name for index files when fetching a URL ending with a C</>.
+The default is F<index.html>.
+
+=item *
+
+B<--no-follow>, B<--follow>
+
+Disables or enables following links in HTML, XHTML, and CSS pages.
+The default option is to follow links.
+
+=item *
+
+B<--quiet>
+
+Hide all output.
+
+=item *
+
+B<--include> <path>, B<-INC> <path>
+
+Library paths to include. This option can be repeated.
+
+=item *
+
+B<--help>
+
+Print a short online help and exit.
+
+=item *
+
+B<--manual>
+
+Print the full manual page and exit.
+
+=back
 
 =head1 EXAMPLE
 
