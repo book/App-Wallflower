@@ -1,5 +1,11 @@
 Revision history for App-Wallflower
 
+1.001 Fri Oct 12 2012
+        - moved the core of the code in Wallflower
+        - Wallflower::Util adds the capability to extract links
+        - wallflower is a one-liner built around App::Wallflower
+        - wallflower does not behave as a filter by default any more
+
 1.000 Wed Sep  5 2012
         - converted the Dancer-specific wallflower into
           one that supports any PSGI/Plack application

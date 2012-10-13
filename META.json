@@ -1,5 +1,5 @@
 {
-   "abstract" : "Class performing the moves for the wallflower program",
+   "abstract" : "Sorry I can't dance, I'm hanging to my friend's purse",
    "author" : [
       "Philippe Bruhat (BooK) <book@cpan.org>"
    ],
@@ -27,6 +27,7 @@
       },
       "runtime" : {
          "requires" : {
+            "HTML::LinkExtor" : 0,
             "Path::Class" : 0,
             "Plack" : 0,
             "URI" : 0
@@ -36,7 +37,15 @@
    "provides" : {
       "App::Wallflower" : {
          "file" : "lib/App/Wallflower.pm",
-         "version" : "1.000"
+         "version" : 0
+      },
+      "Wallflower" : {
+         "file" : "lib/Wallflower.pm",
+         "version" : "1.001"
+      },
+      "Wallflower::Util" : {
+         "file" : "lib/Wallflower/Util.pm",
+         "version" : 0
       }
    },
    "release_status" : "stable",
@@ -48,5 +57,5 @@
          "url" : "http://github.com/book/App-Wallflower"
       }
    },
-   "version" : "1.000"
+   "version" : "1.001"
 }
