@@ -23,6 +23,37 @@ as the C<Content-Type>.
 Since the goal of a L<Wallflower> application is to generate a static
 website, it is recommended that I<all URL should have an extensions>.
 
+
+=head1 URI SEMANTICS COMPARED TO DIRECTORY SEMANTICS
+
+A Plack application deals with URI. Nothing prevents the application
+to consider that F</thunk> and F</thunk/> are different, and to return
+different content bodies for each of them.
+
+When dealing with a filesystem, however, if F<thunk> is a directory,
+then it is semantically equivalent to F<thunk/>. And it is impossible
+to have both a file and a directory with the same name inside the same
+parent directory.
+
+When dealing with a static site, the server maps the URI to the
+filesystem. If F<thunk> is a directory, the server usually redirects the
+client to F<thunk/>. Then the default file is picked for the content,
+traditionally F<thunk/index.html>.
+
+Because L<Wallflower> does not know the conventions used by the Plack
+application it calls, it cannot decide if F</thunk> should be understood
+as a "file" or as a "directory" when generating the file name that will
+receive the content for that URI.
+
+If your application treats F</thunk> and F</thunk/> as identical, you
+should I<always> request F</thunk/> with L<wallflower>, otherwise you
+might end up with the F<thunk> file already existing when it tries to
+create files under the F<thunk/> directory, or vice-versa.
+
+See also the section L</"All URL should have an extension">, for reasons
+to avoid extensionless URL.
+
+
 =head1 AUTHOR
 
 Philippe Bruhat (BooK), C<< <book@cpan.org> >>
