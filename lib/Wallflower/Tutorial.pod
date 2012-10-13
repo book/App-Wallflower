@@ -1,0 +1,29 @@
+
+=head1 NAME
+
+Wallflower::Tutorial - Turn your Plack app into a static site
+
+=head1 SYNOPSIS
+
+    # do cool stuff using Plack-aware frameworks,
+    # to generate static web sites
+
+=head1 WRITING A PSGI APPLICATION FOR WALLFLOWER
+
+...
+
+=head1 AUTHOR
+
+Philippe Bruhat (BooK), C<< <book@cpan.org> >>
+
+=head1 COPYRIGHT
+
+Copyright 2012 Philippe Bruhat (BooK), all rights reserved.
+
+=head1 LICENSE
+
+This documentation is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
