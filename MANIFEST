@@ -12,5 +12,8 @@ t/00-load.t
 t/10-target.t
 t/20-get.t
 t/25-errors.t
+t/30-links.t
+t/file-01.css
+t/file-01.html
 t/pod-coverage.t
 t/pod.t
