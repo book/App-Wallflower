@@ -10,7 +10,18 @@ Wallflower::Tutorial - Turn your Plack app into a static site
 
 =head1 WRITING A PSGI APPLICATION FOR WALLFLOWER
 
-...
+=head2 All URL should have an extension
+
+A PSGI/Plack is able to define the C<Content-Type> that will be sent
+for any URL content.
+
+On the other hand, static file servers use the extension to decide what
+C<Content-Type> to send for a given file. When unable to decide what
+the file content is, servers usually send C<application/octet-stream>
+as the C<Content-Type>.
+
+Since the goal of a L<Wallflower> application is to generate a static
+website, it is recommended that I<all URL should have an extensions>.
 
 =head1 AUTHOR
 
