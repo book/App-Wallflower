@@ -24,6 +24,21 @@ Since the goal of a L<Wallflower> application is to generate a static
 website, it is recommended that I<all URL should have an extensions>.
 
 
+=head2 Hide the non-static elements in a specific Plack environment
+
+Because the web site can be written with any modern web framework, it's
+also very easy to have URL that reply to C<POST> requests. Obviously,
+these pages can not be saved on the static destination.
+
+It's very easy to use the Plack environment to decide which pages
+to enable. By default, L<plackup> sets the Plack environment to
+C<development>, while L<wallflower> sets it to C<deployment>.
+
+It's therefore possible to hide the dynamic parts of the application
+in the C<development> environment, while only the static elements are
+reachable from the C<deployment> environment.
+
+
 =head1 URI SEMANTICS COMPARED TO DIRECTORY SEMANTICS
 
 A Plack application deals with URI. Nothing prevents the application
