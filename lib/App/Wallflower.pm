@@ -28,6 +28,7 @@ sub new_with_options {
         'follow!',       'filter|files|F',
         'quiet',         'include|INC=s@',
         'help',          'manual',
+        'tutorial',
     ) or pod2usage(
         -input   => $input,
         -verbose => 1,
@@ -40,6 +41,13 @@ sub new_with_options {
     # simple on-line help
     pod2usage( -verbose => 1 ) if $option{help};
     pod2usage( -verbose => 2 ) if $option{manual};
+    pod2usage(
+        -verbose => 2,
+        -input   => do {
+            require Pod::Find;
+            Pod::Find::pod_where( { -inc => 1 }, 'Wallflower::Tutorial' );
+        },
+    ) if $option{tutorial};
 
     # application is required
     pod2usage(
