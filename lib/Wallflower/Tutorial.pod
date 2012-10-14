@@ -10,6 +10,19 @@ Wallflower::Tutorial - Turn your Plack app into a static site
 
 =head1 WRITING A PSGI APPLICATION FOR WALLFLOWER
 
+The point of saving URL from a PSGI application to files is not simply
+to make a static version of a fully dynamic site.
+
+Contrary to a lot of static web site generators, L<wallflower> does
+I<not> enforce any conventions on its users.
+
+B<L<wallflower> makes it very easy to write a static website using
+the web framework of your choice.>
+
+To make the most of a static website, there are a few simple
+rules to follow, listed below:
+
+
 =head2 All URL should have an extension
 
 A PSGI/Plack is able to define the C<Content-Type> that will be sent
