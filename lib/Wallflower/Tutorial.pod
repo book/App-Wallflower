@@ -39,6 +39,16 @@ in the C<development> environment, while only the static elements are
 reachable from the C<deployment> environment.
 
 
+=head2 Make all URL eventually reachable from the root
+
+By default, L<wallflower> starts by loading C</>, and automatically
+and recursively follows all URL found in HTML and CSS document, until
+all reachable URL have been processed.
+
+The simplest way to generate the full static site is to make
+sure that all URL can be reached by following links from the root.
+
+
 =head1 URI SEMANTICS COMPARED TO DIRECTORY SEMANTICS
 
 A Plack application deals with URI. Nothing prevents the application
