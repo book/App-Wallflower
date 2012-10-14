@@ -6,6 +6,7 @@ use warnings;
 use Plack::Util ();
 use Path::Class;
 use URI;
+use HTTP::Date qw( time2str );
 use Carp;
 
 our $VERSION = '1.001';
@@ -85,6 +86,10 @@ sub get {
         'psgi.streaming' => '',
     };
 
+    # add If-Modified-Since headers if the target file exists
+    my $target = $self->target($uri);
+    $env->{HTTP_IF_MODIFIED_SINCE} = time2str( ( stat _ )[9] ) if -e $target;
+
     # fixup URI
     $uri->scheme('http') if !$uri->scheme;
     $uri->host( $env->{SERVER_NAME} ) if !$uri->host;
@@ -105,7 +110,7 @@ sub get {
     if ( $status eq '200' ) {
 
         # get a file to save the content in
-        my $dir = ( $file = $self->target($uri) )->dir;
+        my $dir = ( $file = $target )->dir;
         $dir->mkpath if !-e $dir;
         open my $fh, '>', $file or croak "Can't open $file for writing: $!";
 
