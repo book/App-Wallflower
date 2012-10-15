@@ -37,6 +37,16 @@ Since the goal of a L<Wallflower> application is to generate a static
 website, it is recommended that I<all URL should have an extensions>.
 
 
+=head2 All responses should have a C<Content-Type> header
+
+Similarly, L<wallflower> decides to check the body of a response for
+links it may contain based on its C<Content-Type> header, as links
+only make sense for HTML and CSS files.
+
+If the response has no C<Content-Type> header, L<wallflower> will miss
+some of the links, and thus not properly crawl the whole site.
+
+
 =head2 Hide the non-static elements in a specific Plack environment
 
 Because the web site can be written with any modern web framework, it's
