@@ -33,7 +33,7 @@ my @tests = (
             [ 'Content-Type' => 'text/css' ],
             File::Spec->catfile( t => 'file-01.css' )
         ],
-        'foo.css', 'bar.css', '/img.png',
+        'foo.css', 'bar.css', '/img.png', '/img_qq.png', '/img_q.png'
     ],
 );
 
