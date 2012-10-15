@@ -47,7 +47,7 @@ sub _links_from_html {
 my $css_regexp = qr{
     (?:
       \@import\s+(?:"([^"]+)"|'([^']+)')
-    | url\(([^)]+)\)
+    | url\((?:"([^"]+)"|'([^']+)'|([^)]+))\)
     )
 }x;
 sub _links_from_css {
