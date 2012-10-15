@@ -216,6 +216,12 @@ where C<$status> and C<$headers> are those return by the application
 itself for the given C<$url>, and C<$file> is the name of the file where
 the content has been saved.
 
+If a file exists at the location pointed to by the target, a
+C<If-Modified-Since> header is added to the Plack environment,
+with the modification timestamp for this file as the value.
+If the application sends a C <304 Not modified> in response,
+    the target file will not be modified .
+
 =head2 target( $uri )
 
 Return the filename where the content of C<$uri> will be saved.
