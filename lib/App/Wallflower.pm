@@ -55,7 +55,7 @@ sub new_with_options {
         @{ $option{include} || [] } ];
 
     local $ENV{PLACK_ENV} = $option{environment};
-    local @INC = ( @INC, @{ $option{inc} } );
+    local @INC = ( @{ $option{inc} }, @INC );
     return bless {
         option     => \%option,
         args       => $args,
@@ -97,7 +97,7 @@ sub _process_queue {
 
     # I'm just hanging on to my friend's purse
     local $ENV{PLACK_ENV} = $self->{option}{environment};
-    local @INC = ( @INC, @{ $self->{option}{inc} } );
+    local @INC = ( @{ $self->{option}{inc} }, @INC );
     @queue = ('/') if !@queue;
     while (@queue) {
 
