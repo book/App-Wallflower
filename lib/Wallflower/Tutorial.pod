@@ -1,0 +1,119 @@
+
+=head1 NAME
+
+Wallflower::Tutorial - Turn your Plack app into a static site
+
+=head1 SYNOPSIS
+
+    # do cool stuff using Plack-aware frameworks,
+    # to generate static web sites
+
+=head1 WRITING A PSGI APPLICATION FOR WALLFLOWER
+
+The point of saving URL from a PSGI application to files is not simply
+to make a static version of a fully dynamic site.
+
+Contrary to a lot of static web site generators, L<wallflower> does
+I<not> enforce any conventions on its users.
+
+B<L<wallflower> makes it very easy to write a static website using
+the web framework of your choice.>
+
+To make the most of a static website, there are a few simple
+rules to follow, listed below:
+
+
+=head2 All URL should have an extension
+
+A PSGI/Plack is able to define the C<Content-Type> that will be sent
+for any URL content.
+
+On the other hand, static file servers use the extension to decide what
+C<Content-Type> to send for a given file. When unable to decide what
+the file content is, servers usually send C<application/octet-stream>
+as the C<Content-Type>.
+
+Since the goal of a L<Wallflower> application is to generate a static
+website, it is recommended that I<all URL should have an extensions>.
+
+
+=head2 All responses should have a C<Content-Type> header
+
+Similarly, L<wallflower> decides to check the body of a response for
+links it may contain based on its C<Content-Type> header, as links
+only make sense for HTML and CSS files.
+
+If the response has no C<Content-Type> header, L<wallflower> will miss
+some of the links, and thus not properly crawl the whole site.
+
+
+=head2 Hide the non-static elements in a specific Plack environment
+
+Because the web site can be written with any modern web framework, it's
+also very easy to have URL that reply to C<POST> requests. Obviously,
+these pages can not be saved on the static destination.
+
+It's very easy to use the Plack environment to decide which pages
+to enable. By default, L<plackup> sets the Plack environment to
+C<development>, while L<wallflower> sets it to C<deployment>.
+
+It's therefore possible to hide the dynamic parts of the application
+in the C<development> environment, while only the static elements are
+reachable from the C<deployment> environment.
+
+
+=head2 Make all URL eventually reachable from the root
+
+By default, L<wallflower> starts by loading C</>, and automatically
+and recursively follows all URL found in HTML and CSS document, until
+all reachable URL have been processed.
+
+The simplest way to generate the full static site is to make
+sure that all URL can be reached by following links from the root.
+
+
+=head1 URI SEMANTICS COMPARED TO DIRECTORY SEMANTICS
+
+A Plack application deals with URI. Nothing prevents the application
+to consider that F</thunk> and F</thunk/> are different, and to return
+different content bodies for each of them.
+
+When dealing with a filesystem, however, if F<thunk> is a directory,
+then it is semantically equivalent to F<thunk/>. And it is impossible
+to have both a file and a directory with the same name inside the same
+parent directory.
+
+When dealing with a static site, the server maps the URI to the
+filesystem. If F<thunk> is a directory, the server usually redirects the
+client to F<thunk/>. Then the default file is picked for the content,
+traditionally F<thunk/index.html>.
+
+Because L<Wallflower> does not know the conventions used by the Plack
+application it calls, it cannot decide if F</thunk> should be understood
+as a "file" or as a "directory" when generating the file name that will
+receive the content for that URI.
+
+If your application treats F</thunk> and F</thunk/> as identical, you
+should I<always> request F</thunk/> with L<wallflower>, otherwise you
+might end up with the F<thunk> file already existing when it tries to
+create files under the F<thunk/> directory, or vice-versa.
+
+See also the section L</"All URL should have an extension">, for reasons
+to avoid extensionless URL.
+
+
+=head1 AUTHOR
+
+Philippe Bruhat (BooK), C<< <book@cpan.org> >>
+
+=head1 COPYRIGHT
+
+Copyright 2012 Philippe Bruhat (BooK), all rights reserved.
+
+=head1 LICENSE
+
+This documentation is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
