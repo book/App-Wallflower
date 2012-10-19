@@ -44,8 +44,8 @@ sub new_with_options {
     Getopt::Long::Configure($save);
 
     # simple on-line help
-    pod2usage( -verbose => 1 ) if $option{help};
-    pod2usage( -verbose => 2 ) if $option{manual};
+    pod2usage( -verbose => 1, -input => $input ) if $option{help};
+    pod2usage( -verbose => 2, -input => $input ) if $option{manual};
     pod2usage(
         -verbose => 2,
         -input   => do {
