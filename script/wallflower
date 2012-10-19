@@ -27,6 +27,7 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
  --index       <filename>   Default name for index file (default: index.html)
  --no-follow                Do not follow links in HTML and CSS pages
  --filter                   Consider arguments as files containing URL
+ --host        <hostname>   Process URL with this hostname
  --quiet                    Do not show progress
  --include     <path>       Library paths to include
 
@@ -104,6 +105,18 @@ B<--no-follow>, B<--follow>
 
 Disables or enables following links in HTML, XHTML, and CSS pages.
 The default option is to follow links.
+
+=item *
+
+B<--host> I<hostname>
+
+By default, L<wallflower> only process URL without a hostname or with
+the hostname C<localhost>. All other hostnames are silently ignored.
+Using this option allows to follow absolute links pointing to the
+application itself.
+
+This option can be repeated. Glob-like C<*> can be used as a joker
+in hostnames.
 
 =item *
 

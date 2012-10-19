@@ -20,13 +20,18 @@ sub new_with_options {
     Getopt::Long::ConfigDefaults();
 
     # get the command-line options (modifies $args)
-    my %option = ( follow => 1, environment => 'deployment' );
+    my %option = (
+        follow      => 1,
+        environment => 'deployment',
+        host        => ['localhost']
+    );
     GetOptionsFromArray(
         $args,           \%option,
         'application=s', 'destination|directory=s',
         'index=s',       'environment=s',
         'follow!',       'filter|files|F',
         'quiet',         'include|INC=s@',
+        'host=s@',
         'help',          'manual',
         'tutorial',
     ) or pod2usage(
@@ -102,6 +107,7 @@ sub _process_queue {
     my ( $quiet, $follow, $seen )
         = @{ $self->{option} }{qw( quiet follow seen )};
     my $wallflower = $self->{wallflower};
+    my $host_ok    = $self->_host_regexp;
 
     # I'm just hanging on to my friend's purse
     local $ENV{PLACK_ENV} = $self->{option}{environment};
@@ -111,6 +117,7 @@ sub _process_queue {
 
         my $url = URI->new( shift @queue );
         next if $seen->{ $url->path }++;
+        next if $url->scheme && ! eval { $url->host =~ $host_ok };
 
         # get the response
         my $response = $wallflower->get($url);
@@ -132,6 +139,14 @@ sub _process_queue {
             unshift @queue, $l if $l;
         }
     }
+}
+
+sub _host_regexp {
+    my ($self) = @_;
+    my $re = join '|',
+        map { s/\./\\./g; s/\*/.*/g; $_ }
+        @{ $self->{option}{host} };
+    return qr{^(?:$re)$};
 }
 
 1;
