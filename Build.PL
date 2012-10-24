@@ -13,6 +13,7 @@ my $builder = Module::Build->new(
         'Path::Class' => 0,
         'Plack'       => 0,
         'URI'         => 0,
+        'HTTP::Date'  => 0,
         'HTML::LinkExtor' => 0,
     },
     build_requires => {
