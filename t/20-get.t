@@ -117,15 +117,14 @@ push @tests, [
     ],
 ];
 
-push @tests,
-    [
+push @tests, [
     'app that dies',
     tempdir( CLEANUP => 1 ),
     sub {die},
     [   '/' => 500,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 21 ], '', ''
     ],
-    ];
+];
 
 plan tests => sum map 2 * ( @$_ - 3 ), @tests;
 
