@@ -4,6 +4,7 @@ use Test::More;
 use File::Temp qw( tempdir );
 use List::Util qw( sum );
 use URI;
+use HTTP::Date qw( str2time );
 use Wallflower;
 
 # setup test data
@@ -124,6 +125,32 @@ push @tests, [
     [   '/' => 500,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 21 ], '', ''
     ],
+];
+
+push @tests, [
+    'app supporting If-Modified-Since',
+    tempdir( CLEANUP => 1 ),
+    do {
+        my %date;
+        sub {
+            my $env = shift;
+            $date{ $env->{REQUEST_URI} } ||= time;
+            my $since = str2time( $env->{HTTP_IF_MODIFIED_SINCE} ) || 0;
+            return $date{ $env->{REQUEST_URI} } <= $since
+                ? [ 304, [], '' ]
+                : [
+                    200,
+                    [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+                    ['Hello, World!']
+                ];
+        };
+    },
+    [   '/' => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        'index.html',
+        'Hello, World!'
+    ],
+    [ '/' => 304, [], '', '' ],
 ];
 
 plan tests => sum map 2 * ( @$_ - 3 ), @tests;
