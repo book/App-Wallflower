@@ -8,6 +8,34 @@ Wallflower::Tutorial - Turn your Plack app into a static site
     # do cool stuff using Plack-aware frameworks,
     # to generate static web sites
 
+
+=head1 INTRODUCTION: THE BENEFITS OF STATIC WEBSITES
+
+Static websites have a lot of advantages, when serving data
+that changes rarely:
+
+=over 4
+
+=item *
+
+speed
+
+=item *
+
+security
+
+=item *
+
+deployment by copy
+
+=back
+
+Dynamic websites have more to do with JavaScript than with C<POST> or
+query strings. JavaScript code run on the client can take advantage of
+JSON files containing useful data. Updates to the data do not necessarily
+have to be performed on the public side of the site.
+
+
 =head1 WRITING A PSGI APPLICATION FOR WALLFLOWER
 
 The point of saving URL from a PSGI application to files is not simply
