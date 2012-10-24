@@ -56,7 +56,8 @@ sub get {
     $uri = URI->new($uri) if !ref $uri;
 
     # absolute paths have the empty string as their first path_segment
-    croak "$uri is not an absolute URI" if length +( $uri->path_segments )[0];
+    croak "$uri is not an absolute URI"
+        if $uri->path && length +( $uri->path_segments )[0];
 
     # setup the environment
     my $env = {
