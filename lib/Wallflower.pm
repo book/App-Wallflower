@@ -9,7 +9,7 @@ use URI;
 use HTTP::Date qw( time2str );
 use Carp;
 
-our $VERSION = '1.001';
+our $VERSION = '1.002';
 
 # quick accessors
 for my $attr (qw( application destination env index )) {

@@ -1,5 +1,11 @@
 Revision history for App-Wallflower
 
+1.002 Wed Oct 24 2012
+        - added a tutorial
+        - added support for If-Modified-Since headers
+        - limited following links to localhost only,
+          extra hosts can be added with the --host option
+
 1.001 Fri Oct 12 2012
         - moved the core of the code in Wallflower
         - Wallflower::Util adds the capability to extract links

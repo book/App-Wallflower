@@ -20,16 +20,17 @@ provides:
     version: 0
   Wallflower:
     file: lib/Wallflower.pm
-    version: 1.001
+    version: 1.002
   Wallflower::Util:
     file: lib/Wallflower/Util.pm
     version: 0
 requires:
   HTML::LinkExtor: 0
+  HTTP::Date: 0
   Path::Class: 0
   Plack: 0
   URI: 0
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/book/App-Wallflower
-version: 1.001
+version: 1.002
