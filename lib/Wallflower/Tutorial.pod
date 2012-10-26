@@ -124,7 +124,14 @@ receive the content for that URI.
 If your application treats F</thunk> and F</thunk/> as identical, you
 should I<always> request F</thunk/> with L<wallflower>, otherwise you
 might end up with the F<thunk> file already existing when it tries to
-create files under the F<thunk/> directory, or vice-versa.
+create files under the F<thunk/> directory, or vice-versa. Links provided
+by your application should also be to F</thunk/>. If possible,
+the application should reply with status C<301 Moved Permanently> to
+requests for F<thunk>, since this is what a well-behaved web servers
+serving static pages will issue such a redirect.
+
+An application that treats F</thunk> ("file") and F</thunk/> ("directory")
+differently will B<not work> with L<wallflower>.
 
 See also the section L</"All URL should have an extension">, for reasons
 to avoid extensionless URL.
