@@ -113,25 +113,42 @@ parent directory.
 
 When dealing with a static site, the server maps the URI to the
 filesystem. If F<thunk> is a directory, the server usually redirects the
-client to F<thunk/>. Then the default file is picked for the content,
-traditionally F<thunk/index.html>.
+client to F<thunk/> (using a C<301 Moved Permanently> response). Then the
+default file is picked for the content, traditionally F<thunk/index.html>.
 
 Because L<Wallflower> does not know the conventions used by the Plack
 application it calls, it cannot decide if F</thunk> should be understood
 as a "file" or as a "directory" when generating the file name that will
 receive the content for that URI.
 
-If your application treats F</thunk> and F</thunk/> as identical, you
-should I<always> request F</thunk/> with L<wallflower>, otherwise you
-might end up with the F<thunk> file already existing when it tries to
-create files under the F<thunk/> directory, or vice-versa. Links provided
-by your application should also be to F</thunk/>. If possible,
-the application should reply with status C<301 Moved Permanently> to
-requests for F<thunk>, since this is what a well-behaved web servers
-serving static pages will issue such a redirect.
+So, if your application treats F</thunk> and F</thunk/> as identical,
+you should:
 
-An application that treats F</thunk> ("file") and F</thunk/> ("directory")
-differently will B<not work> with L<wallflower>.
+=over 4
+
+=item *
+
+I<always> request F</thunk/> when providing a list of URL to L<wallflower>.
+Otherwise you might end up with the F<thunk> file already existing when
+it tries to create files under the F<thunk/> directory, or vice-versa.
+
+=item *
+
+make sure that links provided by your application are I<always> to F</thunk/>,
+so that when L<wallflower> follows links automatically, we're back to the
+previous case.
+
+=item *
+
+try to make the application reply with status C<301 Moved Permanently>
+to requests for F<thunk>. This is what a well-behaved web server serving
+static pages will do when a user-agent requests a "directory" without
+a final C</>.
+
+=back
+
+At this point, you know that an application that treats F</thunk> ("file")
+and F</thunk/> ("directory") differently will B<not work> with L<wallflower>.
 
 See also the section L</"All URL should have an extension">, for reasons
 to avoid extensionless URL.
