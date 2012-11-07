@@ -33,6 +33,7 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
 
  --help                     Print a short online help and exit
  --manual                   Print the full manual page and exit
+ --tutorial                 Print the full tutorial page and exit
 
 =head1 DESCRIPTION
 
