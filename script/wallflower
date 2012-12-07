@@ -16,9 +16,9 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
 
 =head1 SYNOPSIS
 
- wallflower [options]
+ wallflower [options] [arguments]
 
-=head1 OPTIONS
+=head1 OPTIONS AND ARGUMENTS
 
  --application <app>        Name of the .psgi application file
  --destination <path>
@@ -29,15 +29,23 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
  --no-follow                Do not follow links in HTML and CSS pages
  --filter
  --files
- -F                         Consider arguments as files containing URL
- --host        <hostname>   Process URL with this hostname
+ -F                         Arguments are files containing lists of URLs
+ --host        <hostname> * Only process URLs with one of these hostnames
  --quiet                    Do not show progress
- --include
- --INC         <path>       Library paths to include
+ --include     <path>     *
+ --INC         <path>     * Library paths to include, delimited with your OS'
+                            path sepatator ($Config::Config{path_sep})
 
  --help                     Print a short online help and exit
  --manual                   Print the full manual page and exit
  --tutorial                 Print the tutorial and exit
+
+Options marked with * can be repeated as necessary.
+
+Arguments are either URLs or (if I<--filter> is specified) files containing
+URLs (one per line) or lines containing only spaces or where the first
+non-space is a #. If no arguments are present, / (or standard input if
+I<--filter> is specified) is used instead.
 
 =head1 DESCRIPTION
 
