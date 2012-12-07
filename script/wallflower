@@ -8,11 +8,11 @@ App::Wallflower->new_with_options( \@ARGV )->run;
 __END__
 
 =for MakeMaker
-App::Wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
+App::Wallflower - Turn a Plack application into a set of static web pages
 
 =head1 NAME
 
-wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
+wallflower - Turn a Plack application into a set of static web pages
 
 =head1 SYNOPSIS
 
