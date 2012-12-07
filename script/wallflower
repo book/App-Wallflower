@@ -21,18 +21,23 @@ wallflower - Turn a Plack application into a set of static web pages
 =head1 OPTIONS
 
  --application <app>        Name of the .psgi application file
- --destination <path>       Destination directory for the static files
+ --destination <path>
+ --directory   <path>       Destination directory for the static files
 
  --environment <name>       Plack environment (default: deployment)
  --index       <filename>   Default name for index file (default: index.html)
  --no-follow                Do not follow links in HTML and CSS pages
- --filter                   Consider arguments as files containing URL
+ --filter
+ --files
+ -F                         Consider arguments as files containing URL
  --host        <hostname>   Process URL with this hostname
  --quiet                    Do not show progress
- --include     <path>       Library paths to include
+ --include
+ --INC         <path>       Library paths to include
 
  --help                     Print a short online help and exit
  --manual                   Print the full manual page and exit
+ --tutorial                 Print the tutorial and exit
 
 =head1 DESCRIPTION
 
