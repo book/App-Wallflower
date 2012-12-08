@@ -49,33 +49,36 @@ I<--filter> is specified) is used instead.
 
 =head1 DESCRIPTION
 
-B<wallflower> turns your L<Plack> application into a static web site.
+B<wallflower> turns your L<Plack> application into a static (read-only)
+web site.
 
-While not suitable for all applications, there are a number of use cases
-where this makes sense. Most web sites are in essence static. Without a
-way for users to update information on the site (via forms, comments, etc)
-the only changes in the web site come from sources that you control
+While this isn't suitable for all applications, it makes sense for many
+uses. Most web sites are largely static. With no
+way for the site's users to update its content (via forms, comments, etc)
+the only changes to the web site come from sources that you control
 (including the database) and that are accessible in your development
 environment.
 
 Using a web framework like L<Dancer> (or any other) for a static web
-site actually makes a lot of sense, just because it gives you access
-to all the features of the framework for that site. Think of it as
-I<extreme caching>.
+site is very useful, because it lets you use all the features of the
+framework on that site. You can think of it as I<extreme caching>.
 
-So, forms could be processed on your development server
-(e.g. to update a local database), and the pages to be I<published>
-would be a I<subset> of all the URL that the application supports.
+A possible dataflow would be processing forms on your development server
+(maybe to update a local database), then I<publish> as static pages
+a I<subset> of all the URLs the application supports.
 
-Turning such an application into a real static site (a set of pages
+Turning that application into a real static site (a set of pages
 to upload to a static web server) is just a matter of generating all
-possible URL for the static site and saving them to files.
+possible URLs for the static site and saving the corresponding pages to files.
 
-B<wallflower> does exactly that. It reads a list of URL, strips them
-from their query strings, turn them into C<GET> requests and saves the
-response body to a file whose name matches the request pathinfo.
+B<wallflower> does just that. It reads a list of URLs, strips off
+any query strings, issues HTTP C<GET> requests for each in turn and
+saves the response body to a file with a name derived from the request
+pathinfo, under the directory specified by --destination.
 
-B<wallflower> is not a generic offline browsing tool.
+Note that B<wallflower> is not meant for use as an offline browsing tool:
+among other things, it doesn't rewrite link URLs to match the pathnames of
+the saved pages.
 
 =head2 COMMAND-LINE OPTIONS
 
