@@ -34,7 +34,7 @@ wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
  --quiet                    Do not show progress
  --include     <path>     *
  --INC         <path>     * Library paths to include, delimited with your OS'
-                            path sepatator ($Config::Config{path_sep})
+                            path separator ($Config::Config{path_sep})
 
  --help                     Print a short online help and exit
  --manual                   Print the full manual page and exit
