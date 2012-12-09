@@ -20,27 +20,46 @@ wallflower - Turn a Plack application into a set of static web pages
 
 =head1 OPTIONS AND ARGUMENTS
 
- --application <app>        Name of the .psgi application file
- --destination <path>
- --directory   <path>       Destination directory for the static files
+In typical L<Getopt::Long> fashion, all options can be abbreviated
+as long as the shorter version is unambiguous.
 
- --environment <name>       Plack environment (default: deployment)
- --index       <filename>   Default name for index file (default: index.html)
- --no-follow                Do not follow links in HTML and CSS pages
+=head2 REQUIRED OPTIONS
+
+ --application <app>        Pathname of the .psgi Plack application file
+
+=head2 OTHER OPTIONS
+
+ --destination <path>
+ --directory   <path>       Directory for saving generated files
+                            (default: current dir), must exist
+ --environment <name>       Plack environment for running the application,
+                            usually development, deployment, or test
+                            (default: deployment)
+ --index       <filename>   Name of index file for URLs ending in /
+                            (default: index.html)
+ --follow
+ --no-follow                Do/don't follow links in (X)HTML and CSS pages
+                            (default = follow)
  --filter
  --files
  -F                         Arguments are files containing lists of URLs
- --host        <hostname> * Only process URLs with one of these hostnames
- --quiet                    Do not show progress
+ --host        <hostname> * Process URLs with one of these hostnames in
+                            addition to hostame-less ones and ones using
+                            localhost (default is only hostame-less and
+                            localhost ones), can include * as a wildcard,
+                            like *.example.com
+ --quiet                    Don't display URLs as they're processed
  --include     <path>     *
- --INC         <path>     * Library paths to include, delimited with your OS'
-                            path separator ($Config::Config{path_sep})
+ --INC         <path>     * Library paths to add to @INC, delimited with your
+                            OS' path separator ($Config::Config{path_sep})
 
- --help                     Print a short online help and exit
+ --help                     Print a short help summary and exit
  --manual                   Print the full manual page and exit
  --tutorial                 Print the tutorial and exit
 
 Options marked with * can be repeated as necessary.
+
+=head2 ARGUMENTS
 
 Arguments are either URLs or (if I<--filter> is specified) files containing
 URLs (one per line) or lines containing only spaces or where the first
@@ -79,98 +98,6 @@ pathinfo, under the directory specified by --destination.
 Note that B<wallflower> is not meant for use as an offline browsing tool:
 among other things, it doesn't rewrite link URLs to match the pathnames of
 the saved pages.
-
-=head2 COMMAND-LINE OPTIONS
-
-In typical L<Getopt::Long> fashion, all options can be shortened,
-so long as the shortened version is unambiguous.
-
-=over 4
-
-=item *
-
-B<--application> I<application>
-
-The path to the Plack application to run.
-This option is required.
-
-=item *
-
-B<--destination> I<path>, B<--directory> I<path>
-
-The directory where files will be saved.
-This option is required, and the directory must exist.
-
-=item *
-
-B<--environment> I<name>
-
-Define the Plack environment to run the application in.
-The default environment is C<deployment>.
-
-=item *
-
-B<--index> I<filename>
-
-The default name for index files when fetching a URL ending with a C</>.
-The default is F<index.html>.
-
-=item *
-
-B<--no-follow>, B<--follow>
-
-Disables or enables following links in HTML, XHTML, and CSS pages.
-The default option is to follow links.
-
-=item *
-
-B<--host> I<hostname>
-
-By default, L<wallflower> only process URL without a hostname or with
-the hostname C<localhost>. All other hostnames are silently ignored.
-Using this option allows to follow absolute links pointing to the
-application itself.
-
-This option can be repeated. Glob-like C<*> can be used as a joker
-in hostnames.
-
-=item *
-
-B<--filter>, B<--files>
-
-Behave as a filter: all remaining arguments on the command-line are
-considered as files containing URL to process (one per line).
-If no arguments are provided, will read from standard input.
-
-The normal behaviour (without B<--filter>) is to consider the remaining
-arguments as a list of URL. If no arguments are provided, assume the
-only URL is C</>.
-
-=item *
-
-B<--quiet>
-
-Hide all output.
-
-=item *
-
-B<--include> <path>, B<-INC> <path>
-
-Library paths to include. This option can be repeated.
-
-=item *
-
-B<--help>
-
-Print a short online help and exit.
-
-=item *
-
-B<--manual>
-
-Print the full manual page and exit.
-
-=back
 
 =head1 EXAMPLE
 
