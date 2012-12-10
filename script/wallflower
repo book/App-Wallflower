@@ -103,7 +103,7 @@ the saved pages.
 
 The web site created by C<dancer -a mywebapp> is the perfect example.
 
-The complete list of URL needed to view the site is:
+The complete list of URLs needed to view the site is:
 
     /
     /404.html
@@ -117,7 +117,7 @@ The complete list of URL needed to view the site is:
 
 Passing this list to B<wallflower> gives the following result:
 
-    $ wallflower -a bin/app.pl -d /tmp -f urls.txt
+    $ wallflower -a bin/app.pl -d /tmp -F urls.txt
     200 / => /tmp/output/index.html [5367]
     200 /404.html => /tmp/output/404.html [499]
     200 /500.html => /tmp/output/500.html [510]
@@ -128,17 +128,20 @@ Passing this list to B<wallflower> gives the following result:
     404 /images/perldancer.jpg
     200 /javascripts/jquery.js => /tmp/output/javascripts/jquery.js [248235]
 
-Note that URL with a path ending with a C</> or a name without an extension
-will be considered to be a directory, and have the default I<index> filename
-appended.
+Note that URLs with a path ending in a C</> are considered directories
+and have the default I<index> filename appended, and that wallflower will
+behave unpredictably if the site contains pages accessible through URLs
+ending both in F<foo> and F<foo/>. This is arguably a bug, but it's
+unclear where to fix it, or if it can be fixed at all. See
+L<Wallflower::Tutorial/URI SEMANTICS COMPARED TO DIRECTORY SEMANTICS> for
+background on this.
 
-Any URL resulting in a status different than C<200> will be logged,
-but not saved.
+Any URL returning a status other than C<200> will be logged,
+but not saved. URLs returning a C<301> status (moved) are followed.
 
-Only the path section is used to fetch the response, which means that URL
-that pointing to other sites will likely result in C<404> (or point to
-a page that exist in the application, and therefore fetch the I<local>
-response).
+Only the path component is used to fetch the response, so URLs
+pointing to other sites will likely return a C<404> (or fetch the
+I<local> page if it exists in the application).
 
 =head1 AUTHOR
 
