@@ -11,7 +11,7 @@ use Carp;
 
 our $VERSION = '1.002';
 
-# quick accessors
+# quick getters
 for my $attr (qw( application destination env index )) {
     no strict 'refs';
     *$attr = sub { $_[0]{$attr} };
@@ -185,7 +185,9 @@ This parameter is I<required>.
 
 =item C<destination>
 
-The destination directory. By default, will use the current directory.
+The destination directory. Default is the current directory.
+
+The destination directory must exist.
 
 =item C<env>
 
@@ -193,35 +195,34 @@ Additional environment key/value pairs.
 
 =item C<index>
 
-The default file name for URL ending with a C</>.
+The default filename for URLs ending in C</>.
 The default value is F<index.html>.
 
 =back
 
-
 =head2 get( $url )
 
 Perform a C<GET> request for C<$url> through the application, and
-in case of success, save the result to a file, whose name is obtained
-via the C<target()> method.
+if successful, save the result to a filename derived from $url by
+the C<target()> method.
 
-C<$url> may be either a string or a L<URI> object, representing an
-absolute URL (the path must start with a C</>). The scheme, host and port
-elements are optional. The query string will be ignored.
+C<$url> can be either a string or a L<URI> object, representing an
+absolute URL (the path must start with a C</>). The scheme, host, port,
+and query string are ignored if present.
 
-The return value is very similar those of a L<Plack> application:
+The return value is very similar to a L<Plack> application's:
 
    [ $status, $headers, $file ]
 
-where C<$status> and C<$headers> are those return by the application
+where C<$status> and C<$headers> are those returned by the application
 itself for the given C<$url>, and C<$file> is the name of the file where
 the content has been saved.
 
 If a file exists at the location pointed to by the target, a
 C<If-Modified-Since> header is added to the Plack environment,
 with the modification timestamp for this file as the value.
-If the application sends a C <304 Not modified> in response,
-    the target file will not be modified .
+If the application sends a C<304 Not modified> in response,
+the target file will not be modified.
 
 =head2 target( $uri )
 
@@ -236,7 +237,7 @@ must be absolute.
 
 =head1 ACCESSORS
 
-Accessors (that are both getters and setters) exist for all parameters
+Accessors (getters only) exist for all parameters
 to C<new()> and bear the same name.
 
 =head1 AUTHOR
