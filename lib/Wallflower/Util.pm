@@ -79,7 +79,7 @@ Wallflower::Util - Utility functions for Wallflower
 
 =head1 DESCRIPTION
 
-This modules provides methods to extract links from the files
+This module provides methods to extract links from the files
 produced by L<Wallflower>'s C<get()> method.
 
 =head1 FUNCTIONS
