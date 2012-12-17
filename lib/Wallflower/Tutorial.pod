@@ -8,7 +8,6 @@ Wallflower::Tutorial - Turn your Plack app into a static site
     # do cool stuff using Plack-aware frameworks,
     # to generate static web sites
 
-
 =head1 INTRODUCTION: THE BENEFITS OF STATIC WEBSITES
 
 Static websites have a lot of advantages, when serving data
@@ -35,7 +34,6 @@ query strings. JavaScript code run on the client can take advantage of
 JSON files containing useful data. Updates to the data do not necessarily
 have to be performed on the public side of the site.
 
-
 =head1 WRITING A PSGI APPLICATION FOR WALLFLOWER
 
 The point of saving URL from a PSGI application to files is not simply
@@ -50,20 +48,18 @@ the web framework of your choice.>
 To make the most of a static website, there are a few simple
 rules to follow, listed below:
 
+=head2 All URLs should have an extension
 
-=head2 All URL should have an extension
-
-A PSGI/Plack is able to define the C<Content-Type> that will be sent
+A PSGI/Plack application can specify the C<Content-Type> returned
 for any URL content.
 
-On the other hand, static file servers use the extension to decide what
+On the other hand, static servers use the file extension to decide what
 C<Content-Type> to send for a given file. When unable to decide what
 the file content is, servers usually send C<application/octet-stream>
 as the C<Content-Type>.
 
 Since the goal of a L<Wallflower> application is to generate a static
-website, it is recommended that I<all URL should have an extensions>.
-
+website, it is recommended that I<all URL pathnames have an extension>.
 
 =head2 All responses should have a C<Content-Type> header
 
@@ -74,12 +70,11 @@ only make sense for HTML and CSS files.
 If the response has no C<Content-Type> header, L<wallflower> will miss
 some of the links, and thus not properly crawl the whole site.
 
-
 =head2 Hide the non-static elements in a specific Plack environment
 
-Because the web site can be written with any modern web framework, it's
-also very easy to have URL that reply to C<POST> requests. Obviously,
-these pages can not be saved on the static destination.
+Because the website can be written with any modern web framework, it's
+also very easy to have URLs that reply to C<POST> requests. Obviously,
+these pages cannot be saved on the static destination.
 
 It's very easy to use the Plack environment to decide which pages
 to enable. By default, L<plackup> sets the Plack environment to
@@ -89,29 +84,27 @@ It's therefore possible to hide the dynamic parts of the application
 in the C<development> environment, while only the static elements are
 reachable from the C<deployment> environment.
 
-
-=head2 Make all URL eventually reachable from the root
+=head2 Make all URLs eventually reachable from the root
 
 By default, L<wallflower> starts by loading C</>, and automatically
-and recursively follows all URL found in HTML and CSS document, until
-all reachable URL have been processed.
+and repeatedly follows all URLs found in HTML and CSS documents, until
+all reachable URLs have been processed.
 
 The simplest way to generate the full static site is to make
-sure that all URL can be reached by following links from the root.
-
+sure that all URLs can be reached by repeatedly following links from the root.
 
 =head1 URI SEMANTICS COMPARED TO DIRECTORY SEMANTICS
 
-A Plack application deals with URI. Nothing prevents the application
-to consider that F</thunk> and F</thunk/> are different, and to return
-different content bodies for each of them.
+A Plack application deals with URLs. Nothing prevents the application
+from treating F</thunk> and F</thunk/> differently and returning
+different content bodies for them.
 
-When dealing with a filesystem, however, if F<thunk> is a directory,
+From the perspective of a filesystem, however, if F<thunk> is a directory,
 then it is semantically equivalent to F<thunk/>. And it is impossible
 to have both a file and a directory with the same name inside the same
 parent directory.
 
-When dealing with a static site, the server maps the URI to the
+When dealing with a static site, the server maps the URLs to the
 filesystem. If F<thunk> is a directory, the server usually redirects the
 client to F<thunk/> (using a C<301 Moved Permanently> response). Then the
 default file is picked for the content, traditionally F<thunk/index.html>.
@@ -119,7 +112,7 @@ default file is picked for the content, traditionally F<thunk/index.html>.
 Because L<Wallflower> does not know the conventions used by the Plack
 application it calls, it cannot decide if F</thunk> should be understood
 as a "file" or as a "directory" when generating the file name that will
-receive the content for that URI.
+receive the content for that URL.
 
 So, if your application treats F</thunk> and F</thunk/> as identical,
 you should:
@@ -128,19 +121,19 @@ you should:
 
 =item *
 
-I<always> request F</thunk/> when providing a list of URL to L<wallflower>.
+B<Always> request F</thunk/> when providing a list of URLs to L<wallflower>.
 Otherwise you might end up with the F<thunk> file already existing when
 it tries to create files under the F<thunk/> directory, or vice-versa.
 
 =item *
 
-make sure that links provided by your application are I<always> to F</thunk/>,
+Make sure that links provided by your application are I<always> to F</thunk/>,
 so that when L<wallflower> follows links automatically, we're back to the
 previous case.
 
 =item *
 
-try to make the application reply with status C<301 Moved Permanently>
+Try to make the application reply with status C<301 Moved Permanently>
 to requests for F<thunk>. This is what a well-behaved web server serving
 static pages will do when a user-agent requests a "directory" without
 a final C</>.
@@ -150,9 +143,8 @@ a final C</>.
 At this point, you know that an application that treats F</thunk> ("file")
 and F</thunk/> ("directory") differently will B<not work> with L<wallflower>.
 
-See also the section L</"All URL should have an extension">, for reasons
-to avoid extensionless URL.
-
+See also the section L</"All URLs should have an extension">, for why you
+should avoid extensionless URLs.
 
 =head1 AUTHOR
 
