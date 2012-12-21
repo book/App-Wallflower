@@ -229,7 +229,7 @@ the target file will not be modified.
 Return the filename where the content of C<$uri> will be saved.
 
 The C<path> component of C<$uri> is concatenated to the C<destination>
-attribute. If the URI ends with a C</>, the C<index> attribute is appended
+attribute. If the URL ends with a C</>, the C<index> attribute is appended
 to create a file path.
 
 Note that C<target()> assumes C<$uri> is a L<URI> object, and that it
