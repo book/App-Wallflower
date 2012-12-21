@@ -182,8 +182,7 @@ See L<wallflower> for the list of options and their usage.
 Make L<wallflower> dance.
 
 Process the remaining arguments according to the options,
-i.e. either consider them as URL to save, or as files
-containing URL to save.
+i.e. either as URLs to save or as files containing lists of URLs to save.
 
 =head1 AUTHOR
 
