@@ -155,7 +155,7 @@ __END__
 
 =head1 NAME
 
-App::Wallflower - Class performing the moves for the wallflower program
+App::Wallflower - Class doing the actual work for the wallflower program
 
 =head1 SYNOPSIS
 
@@ -173,17 +173,17 @@ program.
 =head2 new_with_options( \@argv )
 
 Process options in the provided array reference (modifying it),
-and return a object ready to be C<run()>.
+and return a object ready to be L<C<run()>|/"run( )">.
 
-See L<wallflower> for the list of options and their usage.
+See L<wallflower/"OPTIONS AND ARGUMENTS"> for the list of options and
+their usage.
 
 =head2 run( )
 
 Make L<wallflower> dance.
 
 Process the remaining arguments according to the options,
-i.e. either consider them as URL to save, or as files
-containing URL to save.
+i.e. either as URLs to save or as files containing lists of URLs to save.
 
 =head1 AUTHOR
 
