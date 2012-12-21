@@ -36,10 +36,10 @@ have to be performed on the public side of the site.
 
 =head1 WRITING A PSGI APPLICATION FOR WALLFLOWER
 
-The point of saving URL from a PSGI application to files is not simply
+The point of saving URLs from a PSGI application to files is not simply
 to make a static version of a fully dynamic site.
 
-Contrary to a lot of static web site generators, L<wallflower> does
+Unlike many static website generators, L<wallflower> does
 I<not> enforce any conventions on its users.
 
 B<L<wallflower> makes it very easy to write a static website using
@@ -59,7 +59,7 @@ the file content is, servers usually send C<application/octet-stream>
 as the C<Content-Type>.
 
 Since the goal of a L<Wallflower> application is to generate a static
-website, it is recommended that I<all URL pathnames have an extension>.
+website, I<all URL pathnames should have an extension>.
 
 =head2 All responses should have a C<Content-Type> header
 
@@ -93,7 +93,7 @@ all reachable URLs have been processed.
 The simplest way to generate the full static site is to make
 sure that all URLs can be reached by repeatedly following links from the root.
 
-=head1 URI SEMANTICS COMPARED TO DIRECTORY SEMANTICS
+=head1 URL SEMANTICS COMPARED TO DIRECTORY SEMANTICS
 
 A Plack application deals with URLs. Nothing prevents the application
 from treating F</thunk> and F</thunk/> differently and returning

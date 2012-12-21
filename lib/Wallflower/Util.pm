@@ -89,7 +89,7 @@ produced by L<Wallflower>'s C<get()> method.
 Returns all links found in the response body, depending on its content type.
 
 C<$response> is the array reference returned by L<Wallflower>'s C<get()>
-method. C<$url> is the base URI for resolving relative links, i.e. the
+method. C<$url> is the base URL for resolving relative links, i.e. the
 original argument to C<get()>.
 
 =head1 AUTHOR
