@@ -203,7 +203,7 @@ The default value is F<index.html>.
 =head2 get( $url )
 
 Perform a C<GET> request for C<$url> through the application, and
-if successful, save the result to a filename derived from $url by
+if successful, save the result to a filename derived from C<$url> by
 the C<target()> method.
 
 C<$url> can be either a string or a L<URI> object, representing an
