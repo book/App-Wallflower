@@ -61,7 +61,7 @@ environment.
 
 Using a web framework like L<Dancer> (or any other) for a static web
 site is very useful, because it lets you use all the features of the
-framework on that site. You can think of it as I<extreme caching>.
+framework on that site. Think of it as I<extreme caching>.
 
 A possible dataflow would be processing forms on your development server
 (maybe to update a local database), then I<publish> as static pages
@@ -74,7 +74,7 @@ possible URLs for the static site and saving the corresponding pages to files.
 B<wallflower> does just that. It reads a list of URLs, strips off
 any query strings, issues HTTP C<GET> requests for each in turn and
 saves the response body to a file with a name derived from the request
-pathinfo, under the directory specified by --destination.
+pathinfo, under the directory specified by the B<--destination> option.
 
 Note that B<wallflower> is not meant for use as an offline browsing tool:
 among other things, it doesn't rewrite link URLs to match the pathnames of
