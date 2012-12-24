@@ -5,14 +5,8 @@ use App::Wallflower;
 
 App::Wallflower->new_with_options( \@ARGV )->run;
 
-__END__
-
-=for MakeMaker
-App::Wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
-
-=head1 NAME
-
-wallflower - Sorry I can't dance, I'm hanging on to my friend's purse
+# PODNAME: wallflower
+# ABSTRACT: Sorry I can't dance, I'm hanging on to my friend's purse
 
 =head1 SYNOPSIS
 
@@ -143,10 +137,6 @@ Only the path component is used to fetch the response, so URLs
 pointing to other sites will likely return a C<404> (or fetch the
 I<local> page if it exists in the application).
 
-=head1 AUTHOR
-
-Philippe Bruhat (BooK)
-
 =head1 ACKNOWLEDGEMENTS
 
 L<wallflower> started as a neat idea in a discussion between Marc
@@ -165,15 +155,6 @@ nothing to do with L<Dancer> and much more with L<Plack>.
 
 L<wallflower> treats all L<Plack> applications equally, even if the
 first version of the program was targetting L<Dancer> only.
-
-=head1 COPYRIGHT
-
-Copyright 2010-2012 Philippe Bruhat (BooK), all rights reserved.
-
-=head1 LICENSE
-
-This program is free software and is published under the same
-terms as Perl itself.
 
 =cut
 

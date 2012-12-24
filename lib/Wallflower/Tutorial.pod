@@ -1,7 +1,6 @@
 
-=head1 NAME
-
-Wallflower::Tutorial - Turn your Plack app into a static site
+# ABSTRACT: Turn your Plack app into a static site
+# PODNAME: Wallflower::Tutorial
 
 =head1 SYNOPSIS
 
@@ -145,19 +144,6 @@ and F</thunk/> ("directory") differently will B<not work> with L<wallflower>.
 
 See also the section L</"All URLs should have an extension">, for why you
 should avoid extensionless URLs.
-
-=head1 AUTHOR
-
-Philippe Bruhat (BooK), C<< <book@cpan.org> >>
-
-=head1 COPYRIGHT
-
-Copyright 2012 Philippe Bruhat (BooK), all rights reserved.
-
-=head1 LICENSE
-
-This documentation is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut
 

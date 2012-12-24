@@ -144,11 +144,7 @@ sub get {
 
 1;
 
-__END__
-
-=head1 NAME
-
-Wallflower - Stick Plack applications to the wallpaper
+# ABSTRACT: Stick Plack applications to the wallpaper
 
 =head1 SYNOPSIS
 
@@ -167,9 +163,7 @@ Wallflower - Stick Plack applications to the wallpaper
 Given a URL and a L<Plack> application, a L<Wallflower> object will
 save the corresponding response to a file.
 
-=head1 METHODS
-
-=head2 new( %args )
+=method new( %args )
 
 Create a new L<Wallflower> object.
 
@@ -200,7 +194,7 @@ The default value is F<index.html>.
 
 =back
 
-=head2 get( $url )
+=method get( $url )
 
 Perform a C<GET> request for C<$url> through the application, and
 if successful, save the result to a filename derived from C<$url> by
@@ -224,7 +218,7 @@ with the modification timestamp for this file as the value.
 If the application sends a C<304 Not modified> in response,
 the target file will not be modified.
 
-=head2 target( $uri )
+=method target( $uri )
 
 Return the filename where the content of C<$uri> will be saved.
 
@@ -239,19 +233,6 @@ must be absolute.
 
 Accessors (getters only) exist for all parameters
 to C<new()> and bear the same name.
-
-=head1 AUTHOR
-
-Philippe Bruhat (BooK)
-
-=head1 COPYRIGHT
-
-Copyright 2010-2012 Philippe Bruhat (BooK), all rights reserved.
-
-=head1 LICENSE
-
-This program is free software and is published under the same
-terms as Perl itself.
 
 =cut
 

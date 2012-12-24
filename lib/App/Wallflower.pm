@@ -151,11 +151,8 @@ sub _host_regexp {
 
 1;
 
-__END__
+# ABSTRACT: Class performing the moves for the wallflower program
 
-=head1 NAME
-
-App::Wallflower - Class performing the moves for the wallflower program
 
 =head1 SYNOPSIS
 
@@ -168,34 +165,20 @@ App::Wallflower - Class performing the moves for the wallflower program
 L<App::Wallflower> is a container for functions for the L<wallflower>
 program.
 
-=head1 METHODS
 
-=head2 new_with_options( \@argv )
+=method new_with_options( \@argv )
 
 Process options in the provided array reference (modifying it),
 and return a object ready to be C<run()>.
 
 See L<wallflower> for the list of options and their usage.
 
-=head2 run( )
+=method run( )
 
 Make L<wallflower> dance.
 
 Process the remaining arguments according to the options,
 i.e. either as URLs to save or as files containing lists of URLs to save.
-
-=head1 AUTHOR
-
-Philippe Bruhat (BooK)
-
-=head1 COPYRIGHT
-
-Copyright 2010-2012 Philippe Bruhat (BooK), all rights reserved.
-
-=head1 LICENSE
-
-This program is free software and is published under the same
-terms as Perl itself.
 
 =cut
 
