@@ -1,5 +1,8 @@
 Revision history for App-Wallflower
 
+{{$NEXT}}
+        - switched to using Dist::Zilla to maintain the distribution
+
 1.002 Wed Oct 24 2012
         - added a tutorial
         - added support for If-Modified-Since headers
