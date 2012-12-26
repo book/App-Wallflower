@@ -17,35 +17,40 @@ App::Wallflower->new_with_options( \@ARGV )->run;
 In typical L<Getopt::Long> fashion, all options can be abbreviated
 as long as the shorter version is unambiguous.
 
-=head2 REQUIRED OPTIONS
+=head2 Required options
 
  --application <app>        Pathname of the .psgi Plack application file
 
-=head2 OTHER OPTIONS
+=head2 Other options
 
- --destination <path>
- --directory   <path>       Directory for saving generated files
-                            (default: current dir), must exist
+ --destination <path>       Directory for saving generated files
+ --directory   <path>       (default: current dir), must exist
+
  --environment <name>       Plack environment for running the application,
                             usually development, deployment, or test
                             (default: deployment)
+
  --index       <filename>   Name of index file for URLs ending in /
                             (default: index.html)
- --follow
- --no-follow                Do/don't follow links in (X)HTML and CSS pages
-                            (default = follow)
- --filter
+
+ --follow                   Do/don't follow links in (X)HTML and CSS pages
+ --no-follow                (default = follow)
+
+ --filter                   Arguments are files containing lists of URLs
  --files
- -F                         Arguments are files containing lists of URLs
+ -F
+
  --host        <hostname> * Process URLs with one of these hostnames in
                             addition to hostame-less ones and ones using
                             localhost (default is only hostame-less and
                             localhost ones), can include * as a wildcard,
                             like *.example.com
+
  --quiet                    Don't display URLs as they're processed
- --include     <path>     *
- --INC         <path>     * Library paths to add to @INC, delimited with your
-                            OS' path separator ($Config::Config{path_sep})
+
+
+ --include     <path>     * Library paths to add to @INC, delimited with your
+ --INC         <path>     * OS' path separator ($Config::Config{path_sep})
 
  --help                     Print a short help summary and exit
  --manual                   Print the full manual page and exit
@@ -53,7 +58,7 @@ as long as the shorter version is unambiguous.
 
 Options marked with * can be repeated as necessary.
 
-=head2 ARGUMENTS
+=head2 Arguments
 
 Arguments are either URLs or (if I<--filter> is specified) files containing
 URLs (one per line) or lines containing only spaces or where the first
