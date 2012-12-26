@@ -1,7 +1,11 @@
 Revision history for App-Wallflower
 
 {{$NEXT}}
-        - switched to using Dist::Zilla to maintain the distribution
+        - Pau Amma did a thorough proofreading of the documentation,
+          during Quack and Hack Europe 2012 in Paris, improving it
+          almost in time to accompany my Perl Advent Calendar article
+          http://perladvent.pm.org/2012/2012-12-22.html
+        - switched to Dist::Zilla for maintaining the distribution
 
 1.002 Wed Oct 24 2012
         - added a tutorial
