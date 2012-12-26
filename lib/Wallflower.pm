@@ -146,6 +146,8 @@ sub get {
 
 # ABSTRACT: Stick Plack applications to the wallpaper
 
+=pod
+
 =head1 SYNOPSIS
 
     use Wallflower;

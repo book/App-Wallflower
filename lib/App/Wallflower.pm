@@ -153,6 +153,7 @@ sub _host_regexp {
 
 # ABSTRACT: Class performing the moves for the wallflower program
 
+=pod
 
 =head1 SYNOPSIS
 

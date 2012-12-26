@@ -61,6 +61,7 @@ sub _links_from_css {
 
 # ABSTRACT: Utility functions for Wallflower
 
+=pod
 
 =head1 SYNOPSIS
 
