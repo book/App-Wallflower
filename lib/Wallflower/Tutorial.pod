@@ -145,5 +145,26 @@ and F</thunk/> ("directory") differently will B<not work> with L<wallflower>.
 See also the section L</"All URLs should have an extension">, for why you
 should avoid extensionless URLs.
 
+=head1 REFERENCES
+
+A few articles about L<wallflower> have been published,
+and are listed below:
+
+=over 4
+
+=item *
+
+L<http://blogs.perl.org/users/book1/2012/09/sorry-i-cant-dance-im-holding-on-to-my-friends-purse.html>
+
+The wallflower announcement on L<http://blogs.perl.org/>.
+
+=item *
+
+L<http://perladvent.pm.org/2012/2012-12-22.html>
+
+Wallflower in the L<Perl Advent Calendar 2012|http://perladvent.pm.org/2012/>.
+
+=back
+
 =cut
 
