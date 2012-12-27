@@ -9,8 +9,6 @@ use URI;
 use HTTP::Date qw( time2str );
 use Carp;
 
-our $VERSION = '1.002';
-
 # quick getters
 for my $attr (qw( application destination env index )) {
     no strict 'refs';
