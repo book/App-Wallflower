@@ -2,6 +2,11 @@ Revision history for App-Wallflower
 
 {{$NEXT}}
 
+1.004 Thu Dec 27 2012
+        - previous release had no $VERSION, because I forgot to use
+          the appropriate dzil plugin
+        - listed all articles about Wallflower in the tutorial
+
 1.003 Thu Dec 27 2012
         - Pau Amma did a thorough proofreading of the documentation,
           during Quack and Hack Europe 2012 in Paris, improving it
