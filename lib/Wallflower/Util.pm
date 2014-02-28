@@ -54,7 +54,7 @@ sub _links_from_css {
     my ( $file, $url ) = @_;
 
     my $content = do { local ( @ARGV, $/ ) = ("$file"); <> };
-    return grep defined, $content =~ /$css_regexp/gc;
+    return map { URI->new_abs($_, $url) } grep defined, $content =~ /$css_regexp/gc;
 }
 
 1;

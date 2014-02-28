@@ -56,6 +56,30 @@ as long as the shorter version is unambiguous.
  --manual                   Print the full manual page and exit
  --tutorial                 Print the tutorial and exit
 
+=head2 Amazon S3 options
+
+ --s3-bucket      <bucket name>  S3 bucket name to save files
+ --s3-access-key  <key>          AWS access key or AWS_ACCESS_KEY 
+                                 environment variable
+ --s3-secret-key  <key>          AWS secret key or AWS_SECRET_KEY 
+                                 environment variable
+ --s3-acl         <acl>          S3 acl for files default: public-read
+
+ --s3-cache-time  <seconds>      Cache-Control max-age seconds, the time 
+                                 the resource can be cached.  Only 
+                                 applied if a content type matches
+
+ --s3-cache-content-types <content types> 
+
+   MIME Types list separated by
+   commas to set Cache-Control header on wildcards allowed
+
+   example: "image/*,application/javascript"
+ 
+ --s3-delete-unused               Delete unreferenced S3 files that exist 
+                                  in the bucket but were not found to be 
+                                  referenced.
+
 Options marked with * can be repeated as necessary.
 
 =head2 Arguments
