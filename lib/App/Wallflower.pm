@@ -206,7 +206,8 @@ sub _process_queue {
             
             # Check to see if the content alredy exists on s3 if it does, and the etag matches 
             # don't publish it.
-            if(!defined($s3_bucket_contents->{$save_path}) || $s3_bucket_contents->{$save_path}->{etag} ne $digest) {
+            if(!defined($s3_bucket_contents->{$save_path}) || 
+               $s3_bucket_contents->{$save_path}->{etag} ne $digest) {
                 # Use HTTP::Headers since there could be multiple headers 
                 my $h = HTTP::Headers->new(@$headers);
                 my $ct = $h->header('Content-Type');
@@ -228,6 +229,8 @@ sub _process_queue {
                             $s3_headers->{'Cache-Control'} = 'public, max-age=' . $self->{option}->{'s3-cache-time'};
                         }
                     }
+                } else {
+                    $s3_headers->{'Cache-Control'} = 'max-age=0, no-cache, must-revalidate, proxy-revalidate';
                 }
                 
                 $s3_bucket->add_key_filename($save_path,
