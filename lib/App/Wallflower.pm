@@ -223,16 +223,20 @@ sub _process_queue {
                    defined($self->{option}->{'s3-cache-content-types'}) && 
                    defined($self->{option}->{'s3-cache-time'})) {
                     # Set some caching headers if requested
+                    
                     foreach my $match (grep /\S/, split /\s*,\s*/, $self->{option}->{'s3-cache-content-types'}) {
                         $match =~ s/\*/\.\+/g;
                         if($ct =~ /$match/) {
                             $s3_headers->{'Cache-Control'} = 'public, max-age=' . $self->{option}->{'s3-cache-time'};
                         }
                     }
-                } else {
-                    $s3_headers->{'Cache-Control'} = 'max-age=0, no-cache, must-revalidate, proxy-revalidate';
+                    
+                    if(!defined($s3_headers->{'Cache-Control'})) {
+                        $s3_headers->{'Cache-Control'} = 'max-age=0, no-cache, must-revalidate, proxy-revalidate';
+                    }
                 }
                 
+                print "Setting headers: " . Data::Dumper->Dump([$s3_headers]) . "\n";
                 $s3_bucket->add_key_filename($save_path,
                                              "$file",
                                              $s3_headers
