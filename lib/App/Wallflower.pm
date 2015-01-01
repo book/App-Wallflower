@@ -32,6 +32,8 @@ sub new_with_options {
         'follow!',       'filter|files|F',
         'quiet',         'include|INC=s@',
         'host=s@',
+        'server-name=s',
+        'scheme=s',
         'help',          'manual',
         'tutorial',
     ) or pod2usage(
@@ -77,6 +79,8 @@ sub new_with_options {
             application => Plack::Util::load_psgi( $option{application} ),
             ( destination => $option{destination} )x!! $option{destination},
             ( index       => $option{index}       )x!! $option{index},
+            ( server_name => $option{server-name} )x!! $option{server-name},
+            ( scheme      => $option{scheme}      )x!! $option{scheme},
         ),
     }, $class;
 
