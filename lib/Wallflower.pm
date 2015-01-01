@@ -193,6 +193,14 @@ Additional environment key/value pairs.
 The default filename for URLs ending in C</>.
 The default value is F<index.html>.
 
+=item C<server_name>
+
+Server name you deploy (Optional)
+
+=item C<scheme>
+
+URL scheme you use in production (Optional)
+
 =back
 
 =method get( $url )

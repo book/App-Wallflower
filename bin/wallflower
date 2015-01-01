@@ -46,6 +46,10 @@ as long as the shorter version is unambiguous.
                             localhost ones), can include * as a wildcard,
                             like *.example.com
 
+ --server-name              Server name you deploy (Optional)
+
+ --scheme                   URL scheme you use in production (Optional)
+
  --quiet                    Don't display URLs as they're processed
 
 
