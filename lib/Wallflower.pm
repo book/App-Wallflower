@@ -10,7 +10,7 @@ use HTTP::Date qw( time2str );
 use Carp;
 
 # quick getters
-for my $attr (qw( application destination env index )) {
+for my $attr (qw( application destination env index server_name scheme )) {
     no strict 'refs';
     *$attr = sub { $_[0]{$attr} };
 }
@@ -68,6 +68,7 @@ sub get {
 
         # current instance defaults
         %{ $self->env },
+        ('psgi.url_scheme' => $self->scheme )x!! $self->scheme,
 
         # request-related environment variables
         REQUEST_METHOD => 'GET',
@@ -77,8 +78,8 @@ sub get {
         PATH_INFO       => $uri->path,
         REQUEST_URI     => $uri->path,
         QUERY_STRING    => '',
-        SERVER_NAME     => 'localhost',
-        SERVER_PORT     => '80',
+        SERVER_NAME     => $self->server_name || 'localhost',
+        SERVER_PORT     => ($self->scheme || '') eq 'https' ? 443 : 80,
         SERVER_PROTOCOL => "HTTP/1.0",
 
         # wallflower defaults
@@ -90,7 +91,7 @@ sub get {
     $env->{HTTP_IF_MODIFIED_SINCE} = time2str( ( stat _ )[9] ) if -e $target;
 
     # fixup URI (needed to resolve relative URLs in retrieved documents)
-    $uri->scheme('http') if !$uri->scheme;
+    $uri->scheme($self->scheme || 'http') if !$uri->scheme;
     $uri->host( $env->{SERVER_NAME} ) if !$uri->host;
 
     # get the content
@@ -191,6 +192,14 @@ Additional environment key/value pairs.
 
 The default filename for URLs ending in C</>.
 The default value is F<index.html>.
+
+=item C<server_name>
+
+Server name you deploy (Optional)
+
+=item C<scheme>
+
+URL scheme you use in production (Optional)
 
 =back
 
