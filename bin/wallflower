@@ -46,6 +46,10 @@ as long as the shorter version is unambiguous.
                             localhost ones), can include * as a wildcard,
                             like *.example.com
 
+ --mount       <path>       Specify the root path of application to run.
+                            It is almost same as L<plackup>'s C<--path> option.
+                            (Optional)
+
  --quiet                    Don't display URLs as they're processed
 
 
