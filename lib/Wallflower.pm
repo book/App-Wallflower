@@ -10,7 +10,7 @@ use HTTP::Date qw( time2str );
 use Carp;
 
 # quick getters
-for my $attr (qw( application destination env index )) {
+for my $attr (qw( application destination env index mount )) {
     no strict 'refs';
     *$attr = sub { $_[0]{$attr} };
 }
@@ -48,6 +48,18 @@ sub target {
     return Path::Class::File->new( $self->destination, @segments );
 }
 
+sub _application {
+    my $self = shift;
+
+    my $app = $self->application;
+    return $app unless defined $self->mount;
+
+    require Plack::App::URLMap;
+    my $urlmap = Plack::App::URLMap->new;
+    $urlmap->mount($self->mount => $self->application);
+    $urlmap->to_app;
+}
+
 # save the URL to a file
 sub get {
     my ( $self, $uri ) = @_;
@@ -72,7 +84,7 @@ sub get {
         # request-related environment variables
         REQUEST_METHOD => 'GET',
 
-        # TODO properly deal with SCRIPT_NAME and PATH_INFO with mounts
+        # Plack::App::URLMap deal with SCRIPT_NAME and PATH_INFO with mounts
         SCRIPT_NAME     => '',
         PATH_INFO       => $uri->path,
         REQUEST_URI     => $uri->path,
@@ -95,7 +107,7 @@ sub get {
 
     # get the content
     my ( $status, $headers, $file, $content ) = ( 500, [], '', '' );
-    my $res = Plack::Util::run_app( $self->application, $env );
+    my $res = Plack::Util::run_app( $self->_application, $env );
 
     if ( ref $res eq 'ARRAY' ) {
         ( $status, $headers, $content ) = @$res;
@@ -191,6 +203,10 @@ Additional environment key/value pairs.
 
 The default filename for URLs ending in C</>.
 The default value is F<index.html>.
+
+=item C<mount>
+
+Specify the root path of application to run. (Optional)
 
 =back
 
