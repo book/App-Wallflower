@@ -6,6 +6,7 @@ use warnings;
 use Exporter;
 use HTTP::Headers;
 use HTML::LinkExtor;
+use Path::Canonical ();
 
 our @ISA = qw( Exporter );
 our @EXPORT_OK = qw( links_from );
@@ -54,7 +55,21 @@ sub _links_from_css {
     my ( $file, $url ) = @_;
 
     my $content = do { local ( @ARGV, $/ ) = ("$file"); <> };
-    return grep defined, $content =~ /$css_regexp/gc;
+    return map { _expand_link($url, $_) } grep defined, $content =~ /$css_regexp/gc;
+}
+
+sub _expand_link {
+    my ($base, $link) = @_;
+    $base = $base->path if ref $base;
+
+    if ($link =~ m!\A[-+.a-zA-Z0-9]+://!ms || $link =~ m!\A/!ms ) {
+        return $link
+    }
+
+    $base =~ s![^/]+$!!;
+    $base .= '/' if $base !~ m!/$!;
+
+    Path::Canonical::canon_path($base . $link)
 }
 
 1;

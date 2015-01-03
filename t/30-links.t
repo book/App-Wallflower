@@ -28,12 +28,12 @@ my @tests = (
         '/contact.html',
         '/img/lorem.png',
     ],
-    [   '/',
+    [   '/foo/bar.css',
         [   200,
             [ 'Content-Type' => 'text/css' ],
             File::Spec->catfile( t => 'file-01.css' )
         ],
-        'foo.css', 'bar.css', '/img.png', '/img_qq.png', '/img_q.png'
+        '/foo/foo.css', '/foo/bar.css', '/img.png', '/foo/img_qq.png', '/img_q.png', 'http://example.com/ex.png',
     ],
 );
 
