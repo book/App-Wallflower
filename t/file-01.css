@@ -5,9 +5,13 @@ h1 {
 }
 
 h2 {
-    background: url("/img_qq.png");
+    background: url("img_qq.png");
 }
 
 h3 {
-    background: url('/img_q.png');
+    background: url('../img_q.png');
+}
+
+h4 {
+    background: url(http://example.com/ex.png);
 }
