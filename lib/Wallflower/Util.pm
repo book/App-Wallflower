@@ -6,7 +6,6 @@ use warnings;
 use Exporter;
 use HTTP::Headers;
 use HTML::LinkExtor;
-use Path::Canonical ();
 
 our @ISA = qw( Exporter );
 our @EXPORT_OK = qw( links_from );
@@ -65,11 +64,7 @@ sub _expand_link {
     if ($link =~ m!\A[-+.a-zA-Z0-9]+://!ms || $link =~ m!\A/!ms ) {
         return $link
     }
-
-    $base =~ s![^/]+$!!;
-    $base .= '/' if $base !~ m!/$!;
-
-    Path::Canonical::canon_path($base . $link)
+    URI->new_abs($link, $base)->path;
 }
 
 1;
