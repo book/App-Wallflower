@@ -54,7 +54,17 @@ sub _links_from_css {
     my ( $file, $url ) = @_;
 
     my $content = do { local ( @ARGV, $/ ) = ("$file"); <> };
-    return grep defined, $content =~ /$css_regexp/gc;
+    return map { _expand_link($url, $_) } grep defined, $content =~ /$css_regexp/gc;
+}
+
+sub _expand_link {
+    my ($base, $link) = @_;
+    $base = $base->path if ref $base;
+
+    if ($link =~ m!\A[-+.a-zA-Z0-9]+://!ms || $link =~ m!\A/!ms ) {
+        return $link
+    }
+    URI->new_abs($link, $base)->path;
 }
 
 1;
