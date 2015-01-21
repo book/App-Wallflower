@@ -30,6 +30,14 @@ sub new {
     croak "destination is invalid"
         if !-e $self->destination || !-d $self->destination;
 
+    # if the application is mounted somewhere
+    if ( $self->mount ) {
+        require Plack::App::URLMap;
+        my $urlmap = Plack::App::URLMap->new;
+        $urlmap->mount( $self->mount => $self->application );
+        $self->{application} = $urlmap->to_app;
+    }
+
     return $self;
 }
 
@@ -46,18 +54,6 @@ sub target {
 
     # generate target file name
     return Path::Class::File->new( $self->destination, @segments );
-}
-
-sub _application {
-    my $self = shift;
-
-    my $app = $self->application;
-    return $app unless defined $self->mount;
-
-    require Plack::App::URLMap;
-    my $urlmap = Plack::App::URLMap->new;
-    $urlmap->mount($self->mount => $self->application);
-    $urlmap->to_app;
 }
 
 # save the URL to a file
@@ -84,7 +80,7 @@ sub get {
         # request-related environment variables
         REQUEST_METHOD => 'GET',
 
-        # Plack::App::URLMap deal with SCRIPT_NAME and PATH_INFO with mounts
+        # request attributes
         SCRIPT_NAME     => '',
         PATH_INFO       => $uri->path,
         REQUEST_URI     => $uri->path,
@@ -107,7 +103,7 @@ sub get {
 
     # get the content
     my ( $status, $headers, $file, $content ) = ( 500, [], '', '' );
-    my $res = Plack::Util::run_app( $self->_application, $env );
+    my $res = Plack::Util::run_app( $self->application, $env );
 
     if ( ref $res eq 'ARRAY' ) {
         ( $status, $headers, $content ) = @$res;
