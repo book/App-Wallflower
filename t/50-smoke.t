@@ -48,7 +48,7 @@ for my $t (@tests) {
     my $wf = Wallflower->new(
         application => $app,
         destination => $dir,
-        server_name => 'blah.example.com',
+        url         => 'http://blah.example.com',
     );
 
     for my $u (@urls) {

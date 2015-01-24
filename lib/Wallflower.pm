@@ -10,7 +10,7 @@ use HTTP::Date qw( time2str );
 use Carp;
 
 # quick getters
-for my $attr (qw( application destination env index server_name scheme )) {
+for my $attr (qw( application destination env index url )) {
     no strict 'refs';
     *$attr = sub { $_[0]{$attr} };
 }
@@ -22,6 +22,7 @@ sub new {
         destination => Path::Class::Dir->new(),    # File::Spec->curdir
         env         => {},
         index       => 'index.html',
+        url         => 'http://localhost/',
         %args,
     }, $class;
 
@@ -29,6 +30,9 @@ sub new {
     croak "application is required" if !defined $self->application;
     croak "destination is invalid"
         if !-e $self->destination || !-d $self->destination;
+
+    # turn the url attribute into a URI object
+    $self->{url} = URI->new( $self->url );
 
     return $self;
 }
@@ -68,7 +72,7 @@ sub get {
 
         # current instance defaults
         %{ $self->env },
-        ('psgi.url_scheme' => $self->scheme )x!! $self->scheme,
+        ('psgi.url_scheme' => $self->url->scheme )x!! $self->url->scheme,
 
         # request-related environment variables
         REQUEST_METHOD => 'GET',
@@ -78,8 +82,8 @@ sub get {
         PATH_INFO       => $uri->path,
         REQUEST_URI     => $uri->path,
         QUERY_STRING    => '',
-        SERVER_NAME     => $self->server_name || 'localhost',
-        SERVER_PORT     => ($self->scheme || '') eq 'https' ? 443 : 80,
+        SERVER_NAME     => $self->url->host,
+        SERVER_PORT     => $self->url->port,
         SERVER_PROTOCOL => "HTTP/1.0",
 
         # wallflower defaults
@@ -91,7 +95,7 @@ sub get {
     $env->{HTTP_IF_MODIFIED_SINCE} = time2str( ( stat _ )[9] ) if -e $target;
 
     # fixup URI (needed to resolve relative URLs in retrieved documents)
-    $uri->scheme($self->scheme || 'http') if !$uri->scheme;
+    $uri->scheme( $env->{'psgi.url_scheme'} ) if !$uri->scheme;
     $uri->host( $env->{SERVER_NAME} ) if !$uri->host;
 
     # get the content
@@ -193,13 +197,9 @@ Additional environment key/value pairs.
 The default filename for URLs ending in C</>.
 The default value is F<index.html>.
 
-=item C<server_name>
+=item C<url>
 
-Server name you deploy (Optional)
-
-=item C<scheme>
-
-URL scheme you use in production (Optional)
+URL of the production server.
 
 =back
 

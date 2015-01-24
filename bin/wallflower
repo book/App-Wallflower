@@ -40,15 +40,14 @@ as long as the shorter version is unambiguous.
  --files
  -F
 
+ --url         <url>        URL of the production site
+
  --host        <hostname> * Process URLs with one of these hostnames in
                             addition to hostame-less ones and ones using
                             localhost (default is only hostame-less and
                             localhost ones), can include * as a wildcard,
                             like *.example.com
 
- --server-name              Server name you deploy (Optional)
-
- --scheme                   URL scheme you use in production (Optional)
 
  --quiet                    Don't display URLs as they're processed
 

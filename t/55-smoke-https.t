@@ -48,8 +48,7 @@ for my $t (@tests) {
     my $wf = Wallflower->new(
         application => $app,
         destination => $dir,
-        server_name => 'ssl.example.com',
-        scheme      => 'https',
+        url         => 'https://ssl.example.com/',
     );
 
     for my $u (@urls) {
