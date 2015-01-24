@@ -6,6 +6,7 @@ use warnings;
 use Getopt::Long qw( GetOptionsFromArray );
 use Pod::Usage;
 use Plack::Util ();
+use URI;
 use Wallflower;
 use Wallflower::Util qw( links_from );
 
@@ -62,6 +63,10 @@ sub new_with_options {
         -exitval => 2,
         -message => 'Missing required option: application'
     ) if !exists $option{application};
+
+    # add the hostname passed via --url to the list built with --host
+    push @{ $option{host} }, URI->new( $option{url} )->host
+       if $option{url};
 
     # include option
     my $path_sep = $Config::Config{path_sep} || ';';

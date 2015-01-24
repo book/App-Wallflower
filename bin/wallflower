@@ -46,8 +46,8 @@ as long as the shorter version is unambiguous.
                             addition to hostame-less ones and ones using
                             localhost (default is only hostame-less and
                             localhost ones), can include * as a wildcard,
-                            like *.example.com
-
+                            like *.example.com. The hostname used in the
+                            --url option is automatically added to the list,
 
  --quiet                    Don't display URLs as they're processed
 
