@@ -10,7 +10,7 @@ use HTTP::Date qw( time2str );
 use Carp;
 
 # quick getters
-for my $attr (qw( application destination env index mount url )) {
+for my $attr (qw( application destination env index url )) {
     no strict 'refs';
     *$attr = sub { $_[0]{$attr} };
 }
@@ -35,10 +35,11 @@ sub new {
     $self->{url} = URI->new( $self->url );
 
     # if the application is mounted somewhere
-    if ( $self->mount ) {
+    my $path;
+    if ( $path = $self->url->path and $path ne '/' ) {
         require Plack::App::URLMap;
         my $urlmap = Plack::App::URLMap->new;
-        $urlmap->mount( $self->mount => $self->application );
+        $urlmap->mount( $path => $self->application );
         $self->{application} = $urlmap->to_app;
     }
 
@@ -205,13 +206,12 @@ Additional environment key/value pairs.
 The default filename for URLs ending in C</>.
 The default value is F<index.html>.
 
-=item C<mount>
-
-Specify the root path of application to run. (Optional)
-
 =item C<url>
 
-URL of the production server.
+URL where the root of the application will be reachable in production.
+
+If the URL has a path component, the application will be "mounted" at
+that position.
 
 =back
 

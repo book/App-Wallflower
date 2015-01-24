@@ -33,7 +33,6 @@ sub new_with_options {
         'follow!',       'filter|files|F',
         'quiet',         'include|INC=s@',
         'host=s@',
-        'mount=s',
         'url|uri=s',
         'help',          'manual',
         'tutorial',
@@ -84,7 +83,6 @@ sub new_with_options {
             application => Plack::Util::load_psgi( $option{application} ),
             ( destination => $option{destination} )x!! $option{destination},
             ( index       => $option{index}       )x!! $option{index},
-            ( mount       => $option{mount}       )x!! $option{mount},
             ( url         => $option{url}         )x!! $option{url},
         ),
     }, $class;
