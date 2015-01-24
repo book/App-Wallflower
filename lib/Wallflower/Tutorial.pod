@@ -164,6 +164,18 @@ L<http://perladvent.pm.org/2012/2012-12-22.html>
 
 Wallflower in the L<Perl Advent Calendar 2012|http://perladvent.pm.org/2012/>.
 
+=item *
+
+L<http://perltricks.com/article/102/2014/7/15/Generate-static-websites-from-dynamic-Perl-web-apps>
+
+A presentation of Wallflower by one of its users.
+
+=item *
+
+L<http://perltricks.com/article/103/2014/7/22/Create-static-web-apps-with-Wget>
+
+A comparison of using Wget and Wallflower to generate static web sites.
+
 =back
 
 =cut
