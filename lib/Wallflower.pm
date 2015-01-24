@@ -10,7 +10,7 @@ use HTTP::Date qw( time2str );
 use Carp;
 
 # quick getters
-for my $attr (qw( application destination env index mount )) {
+for my $attr (qw( application destination env index mount url )) {
     no strict 'refs';
     *$attr = sub { $_[0]{$attr} };
 }
@@ -22,6 +22,7 @@ sub new {
         destination => Path::Class::Dir->new(),    # File::Spec->curdir
         env         => {},
         index       => 'index.html',
+        url         => 'http://localhost/',
         %args,
     }, $class;
 
@@ -29,6 +30,9 @@ sub new {
     croak "application is required" if !defined $self->application;
     croak "destination is invalid"
         if !-e $self->destination || !-d $self->destination;
+
+    # turn the url attribute into a URI object
+    $self->{url} = URI->new( $self->url );
 
     # if the application is mounted somewhere
     if ( $self->mount ) {
@@ -76,6 +80,7 @@ sub get {
 
         # current instance defaults
         %{ $self->env },
+        ('psgi.url_scheme' => $self->url->scheme )x!! $self->url->scheme,
 
         # request-related environment variables
         REQUEST_METHOD => 'GET',
@@ -85,8 +90,8 @@ sub get {
         PATH_INFO       => $uri->path,
         REQUEST_URI     => $uri->path,
         QUERY_STRING    => '',
-        SERVER_NAME     => 'localhost',
-        SERVER_PORT     => '80',
+        SERVER_NAME     => $self->url->host,
+        SERVER_PORT     => $self->url->port,
         SERVER_PROTOCOL => "HTTP/1.0",
 
         # wallflower defaults
@@ -98,7 +103,7 @@ sub get {
     $env->{HTTP_IF_MODIFIED_SINCE} = time2str( ( stat _ )[9] ) if -e $target;
 
     # fixup URI (needed to resolve relative URLs in retrieved documents)
-    $uri->scheme('http') if !$uri->scheme;
+    $uri->scheme( $env->{'psgi.url_scheme'} ) if !$uri->scheme;
     $uri->host( $env->{SERVER_NAME} ) if !$uri->host;
 
     # get the content
@@ -203,6 +208,10 @@ The default value is F<index.html>.
 =item C<mount>
 
 Specify the root path of application to run. (Optional)
+
+=item C<url>
+
+URL of the production server.
 
 =back
 

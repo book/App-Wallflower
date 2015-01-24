@@ -40,11 +40,14 @@ as long as the shorter version is unambiguous.
  --files
  -F
 
+ --url         <url>        URL of the production site
+
  --host        <hostname> * Process URLs with one of these hostnames in
                             addition to hostame-less ones and ones using
                             localhost (default is only hostame-less and
                             localhost ones), can include * as a wildcard,
-                            like *.example.com
+                            like *.example.com. The hostname used in the
+                            --url option is automatically added to the list,
 
  --mount       <path>       Mount the application at the given path.
                             (Similar to the --path option of plackup)
