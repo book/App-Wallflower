@@ -2,6 +2,14 @@ Revision history for App-Wallflower
 
 {{$NEXT}}
 
+1.005 Sat Jan 24 2015
+    - added a url attribute to declare the URL of the live application
+      (thanks to Masayuki Matsuki (SONGMU) for proposing the mount, scheme
+      and server_name attributes which this one replaces)
+    - fixed _links_from_css to return absolute links
+      (thanks to Masayuki Matsuki (SONGMU))
+    - added more articles about Wallflower in the tutorial
+
 1.004 Thu Dec 27 2012
     - previous release had no $VERSION, because I forgot to use
       the appropriate dzil plugin
