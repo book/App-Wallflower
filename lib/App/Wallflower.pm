@@ -5,10 +5,19 @@ use warnings;
 
 use Getopt::Long qw( GetOptionsFromArray );
 use Pod::Usage;
+use Carp;
 use Plack::Util ();
 use URI;
 use Wallflower;
 use Wallflower::Util qw( links_from );
+
+sub _default_options {
+    return (
+        follow      => 1,
+        environment => 'deployment',
+        host        => ['localhost']
+    );
+}
 
 sub new_with_options {
     my ( $class, $args ) = @_;
@@ -21,11 +30,7 @@ sub new_with_options {
     Getopt::Long::ConfigDefaults();
 
     # get the command-line options (modifies $args)
-    my %option = (
-        follow      => 1,
-        environment => 'deployment',
-        host        => ['localhost']
-    );
+    my %option = _default_options();
     GetOptionsFromArray(
         $args,           \%option,
         'application=s', 'destination|directory=s',
@@ -63,6 +68,22 @@ sub new_with_options {
         -exitval => 2,
         -message => 'Missing required option: application'
     ) if !exists $option{application};
+
+    # create the object
+    return $class->new(
+        option => \%option,
+        args   => $args,
+    );
+
+}
+
+sub new {
+    my ( $class, %args ) = @_;
+    my %option = ( _default_options(), %{ $args{option} } );
+    my $args   = $args{args} || [];
+
+    # application is required
+    croak "Option application is required" if !exists $option{application};
 
     # add the hostname passed via --url to the list built with --host
     push @{ $option{host} }, URI->new( $option{url} )->host
@@ -180,6 +201,13 @@ Process options in the provided array reference (modifying it),
 and return a object ready to be C<run()>.
 
 See L<wallflower> for the list of options and their usage.
+
+=method new( option => \%option, args => \@args )
+
+Create an object ready to be C<run()>.
+
+C<option> is a hashref of options as produced by L<Getopt::Long>, and
+C<args> is an array ref of optional arguments to be processed by C<run()>
 
 =method run( )
 
