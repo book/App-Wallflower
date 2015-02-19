@@ -131,11 +131,10 @@ sub _process_args {
 }
 
 sub _process_queue {
-    my ( $self, @queue ) = @_;
-    my ( $quiet, $follow, $seen )
-        = @{ $self->{option} }{qw( quiet follow seen )};
-    my $wallflower = $self->{wallflower};
-    my $host_ok    = $self->_host_regexp;
+    my ( $self,       @queue )  = @_;
+    my ( $quiet,      $follow ) = @{ $self->{option} }{qw( quiet follow )};
+    my ( $wallflower, $seen )   = @{$self}{qw( wallflower seen )};
+    my $host_ok = $self->_host_regexp;
 
     # I'm just hanging on to my friend's purse
     local $ENV{PLACK_ENV} = $self->{option}{environment};
