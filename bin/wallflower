@@ -51,8 +51,10 @@ as long as the shorter version is unambiguous.
                             like *.example.com. The hostname used in the
                             --url option is automatically added to the list,
 
- --quiet                    Don't display URLs as they're processed
-
+ --errors                   Show URLs that returned a non-200 status code
+ --verbose                  Show URLs that returned a 200 status code
+ --quiet                    Disable both --errors and --verbose
+                            (which are enabled by default)
 
  --include     <path>     * Library paths to add to @INC, delimited with your
  --INC         <path>     * OS' path separator ($Config::Config{path_sep})
