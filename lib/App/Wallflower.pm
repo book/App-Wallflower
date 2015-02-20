@@ -15,9 +15,30 @@ sub _default_options {
     return (
         follow      => 1,
         environment => 'deployment',
-        host        => ['localhost']
+        host        => ['localhost'],
+        verbose     => 1,
+        errors      => 1,
     );
 }
+
+# [ activating option, coderef ]
+my @callbacks = (
+    [   errors => sub {
+            my ( $url, $response ) = @_;
+            my ( $status, $headers, $file ) = @$response;
+            return if $status == 200;
+            printf "$status %s%s\n", $url->path,
+                $file && " => $file [${\-s $file}]";
+            }
+    ], [verbose => sub {
+            my ( $url, $response ) = @_;
+            my ( $status, $headers, $file ) = @$response;
+            return if $status != 200;
+            printf "$status %s%s\n", $url->path,
+                $file && " => $file [${\-s $file}]";
+            }
+    ],
+);
 
 sub new_with_options {
     my ( $class, $args ) = @_;
@@ -37,6 +58,7 @@ sub new_with_options {
         'index=s',       'environment=s',
         'follow!',       'filter|files|F',
         'quiet',         'include|INC=s@',
+        'verbose!',      'errors!',
         'host=s@',
         'url|uri=s',
         'help',          'manual',
@@ -91,13 +113,7 @@ sub new {
        if $option{url};
 
     # pre-defined callbacks
-    push @cb, sub {
-        my ( $url, $response ) = @_;
-        my ( $status, $headers, $file ) = @$response;
-        printf "$status %s%s\n", $url->path,
-            $file && " => $file [${\-s $file}]";
-        }
-        if !$option{quiet};
+    push @cb, map $_->[1], grep $option{ $_->[0] }, @callbacks;
 
     # include option
     my $path_sep = $Config::Config{path_sep} || ';';
