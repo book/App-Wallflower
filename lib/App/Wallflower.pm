@@ -81,6 +81,7 @@ sub new {
     my ( $class, %args ) = @_;
     my %option = ( _default_options(), %{ $args{option} } );
     my $args   = $args{args} || [];
+    my @cb     = @{ $args{callbacks} || [] };
 
     # application is required
     croak "Option application is required" if !exists $option{application};
@@ -99,6 +100,7 @@ sub new {
     return bless {
         option     => \%option,
         args       => $args,
+        callbacks  => \@cb,
         seen       => {},
         wallflower => Wallflower->new(
             application => Plack::Util::load_psgi( $option{application} ),
@@ -153,6 +155,9 @@ sub _process_queue {
         # tell the world
         printf "$status %s%s\n", $url->path, $file && " => $file [${\-s $file}]"
             if !$quiet;
+
+        # run the callbacks
+        $_->( $url => $response ) for @{ $self->{callbacks} };
 
         # obtain links to resources
         if ( $status eq '200' && $follow ) {
