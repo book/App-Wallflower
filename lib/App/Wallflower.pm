@@ -91,6 +91,9 @@ sub new_with_options {
         -message => 'Missing required option: application'
     ) if !exists $option{application};
 
+    # --quiet = --no-verbose --no-errors
+    $option{verbose} = $option{errors} = 0 if $option{quiet};
+
     # create the object
     return $class->new(
         option => \%option,
