@@ -90,6 +90,15 @@ sub new {
     push @{ $option{host} }, URI->new( $option{url} )->host
        if $option{url};
 
+    # pre-defined callbacks
+    push @cb, sub {
+        my ( $url, $response ) = @_;
+        my ( $status, $headers, $file ) = @$response;
+        printf "$status %s%s\n", $url->path,
+            $file && " => $file [${\-s $file}]";
+        }
+        if !$option{quiet};
+
     # include option
     my $path_sep = $Config::Config{path_sep} || ';';
     $option{inc} = [ split /\Q$path_sep\E/, join $path_sep,
@@ -151,10 +160,6 @@ sub _process_queue {
         # get the response
         my $response = $wallflower->get($url);
         my ( $status, $headers, $file ) = @$response;
-
-        # tell the world
-        printf "$status %s%s\n", $url->path, $file && " => $file [${\-s $file}]"
-            if !$quiet;
 
         # run the callbacks
         $_->( $url => $response ) for @{ $self->{callbacks} };
