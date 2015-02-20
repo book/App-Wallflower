@@ -159,12 +159,12 @@ sub _process_queue {
 
         # get the response
         my $response = $wallflower->get($url);
-        my ( $status, $headers, $file ) = @$response;
 
         # run the callbacks
         $_->( $url => $response ) for @{ $self->{callbacks} };
 
         # obtain links to resources
+        my ( $status, $headers, $file ) = @$response;
         if ( $status eq '200' && $follow ) {
             push @queue, links_from( $response => $url );
         }
