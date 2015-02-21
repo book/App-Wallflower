@@ -43,6 +43,7 @@ my @callbacks = (
 sub new_with_options {
     my ( $class, $args ) = @_;
     my $input = (caller)[1];
+    $args ||= [];
 
     # save previous configuration
     my $save = Getopt::Long::Configure();
@@ -104,7 +105,7 @@ sub new_with_options {
 
 sub new {
     my ( $class, %args ) = @_;
-    my %option = ( _default_options(), %{ $args{option} } );
+    my %option = ( _default_options(), %{ $args{option} || {} } );
     my $args   = $args{args} || [];
     my @cb     = @{ $args{callbacks} || [] };
 
