@@ -168,5 +168,9 @@ nothing to do with L<Dancer> and much more with L<Plack>.
 L<wallflower> treats all L<Plack> applications equally, even if the
 first version of the program was targetting L<Dancer> only.
 
+=head1 SEE ALSO
+
+L<Wallflower::Tutorial>
+
 =cut
 
