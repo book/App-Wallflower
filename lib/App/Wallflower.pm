@@ -92,9 +92,6 @@ sub new_with_options {
         -message => 'Missing required option: application'
     ) if !exists $option{application};
 
-    # --quiet = --no-verbose --no-errors
-    $option{verbose} = $option{errors} = 0 if $option{quiet};
-
     # create the object
     return $class->new(
         option => \%option,
@@ -111,6 +108,9 @@ sub new {
 
     # application is required
     croak "Option application is required" if !exists $option{application};
+
+    # --quiet = --no-verbose --no-errors
+    $option{verbose} = $option{errors} = 0 if $option{quiet};
 
     # add the hostname passed via --url to the list built with --host
     push @{ $option{host} }, URI->new( $option{url} )->host
