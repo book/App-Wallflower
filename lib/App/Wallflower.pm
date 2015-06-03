@@ -132,7 +132,9 @@ sub new {
         callbacks  => \@cb,
         seen       => {},
         wallflower => Wallflower->new(
-            application => Plack::Util::load_psgi( $option{application} ),
+            application => ref $option{application}
+                ? $option{application}
+                : Plack::Util::load_psgi( $option{application} ),
             ( destination => $option{destination} )x!! $option{destination},
             ( index       => $option{index}       )x!! $option{index},
             ( url         => $option{url}         )x!! $option{url},
