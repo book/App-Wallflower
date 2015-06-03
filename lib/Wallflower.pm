@@ -125,7 +125,8 @@ sub get {
         # get a file to save the content in
         my $dir = ( $file = $target )->dir;
         $dir->mkpath if !-e $dir;
-        open my $fh, '>', $file or croak "Can't open $file for writing: $!";
+        open my $fh, '> :raw', $file    # no stinky crlf on Win32
+          or croak "Can't open $file for writing: $!";
 
         # copy content to the file
         if ( ref $content eq 'ARRAY' ) {
