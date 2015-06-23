@@ -2,6 +2,14 @@ Revision history for App-Wallflower
 
 {{$NEXT}}
 
+1.006 Wed Jun 24 2015
+    - added --errors and --verbose options to wallflower
+    - added support for callbacks in App::Wallflower
+      (mostly used in testing)
+    - added the list of contributors to the META file
+    - fixed RT #104754 files not saved in binary mode under Win32
+      (thanks to Alexander Becker (ASB) and Vincent Pit (VPIT))
+
 1.005 Sat Jan 24 2015
     - added a url attribute to declare the URL of the live application
       (thanks to Masayuki Matsuki (SONGMU) for proposing the mount, scheme
