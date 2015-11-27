@@ -27,8 +27,7 @@ my @callbacks = (
             my ( $url, $response ) = @_;
             my ( $status, $headers, $file ) = @$response;
             return if $status == 200;
-            printf "$status %s%s\n", $url->path,
-                $file && " => $file [${\-s $file}]";
+            printf "$status %s%s\n", $url->path;
             }
     ], [verbose => sub {
             my ( $url, $response ) = @_;
