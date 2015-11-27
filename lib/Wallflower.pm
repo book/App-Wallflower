@@ -124,9 +124,17 @@ sub get {
 
         # get a file to save the content in
         my $dir = ( $file = $target )->dir;
-        $dir->mkpath if !-e $dir;
+        if ( !-e $dir ) {
+            eval { $dir->mkpath } or do {
+                warn "$@\n" if $@;
+                return [ 999, [], '' ];
+            };
+        }
         open my $fh, '> :raw', $file    # no stinky crlf on Win32
-          or croak "Can't open $file for writing: $!";
+          or do {
+            warn "Can't open $file for writing: $!\n";
+            return [ 999, [], '' ];
+          };
 
         # copy content to the file
         if ( ref $content eq 'ARRAY' ) {
@@ -233,6 +241,10 @@ The return value is very similar to a L<Plack> application's:
 where C<$status> and C<$headers> are those returned by the application
 itself for the given C<$url>, and C<$file> is the name of the file where
 the content has been saved.
+
+If an error is encountered when trying to open the file, C<$status>
+will be set to C<999> (an invalid HTTP status code), and a warning will
+be emitted.
 
 If a file exists at the location pointed to by the target, a
 C<If-Modified-Since> header is added to the Plack environment,

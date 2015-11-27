@@ -153,6 +153,35 @@ push @tests, [
     [ '/' => 304, [], '', '' ],
 ];
 
+push @tests, [
+    'not respecting directory semantics',
+    tempdir( CLEANUP => 1 ),
+    sub {
+        [   200,
+            [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+            [ 'Hello,', ' ', 'World!' ]
+        ];
+    },
+    [ 'http://localhost//foo' => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        'foo',
+        'Hello, World!'
+    ],
+    [ 'http://localhost//foo/bar' => 999, [], '', '' ],
+    [ '/foo' => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        'foo',
+        'Hello, World!'
+    ],
+    [ '/foo/bar' => 999, [], '', '' ],
+    [ '/bar/foo' => 200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
+        'bar/foo',
+        'Hello, World!'
+    ],
+    [ '/bar' => 999, [], '', '' ],
+];
+
 plan tests => sum map 2 * ( @$_ - 3 ), @tests;
 
 for my $t (@tests) {
