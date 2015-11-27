@@ -23,19 +23,22 @@ sub _default_options {
 
 # [ activating option, coderef ]
 my @callbacks = (
-    [   errors => sub {
+    [
+        errors => sub {
             my ( $url, $response ) = @_;
             my ( $status, $headers, $file ) = @$response;
             return if $status == 200;
             printf "$status %s%s\n", $url->path;
-            }
-    ], [verbose => sub {
+        },
+    ],
+    [
+        verbose => sub {
             my ( $url, $response ) = @_;
             my ( $status, $headers, $file ) = @$response;
             return if $status != 200;
             printf "$status %s%s\n", $url->path,
-                $file && " => $file [${\-s $file}]";
-            }
+              $file && " => $file [${\-s $file}]";
+        },
     ],
 );
 
