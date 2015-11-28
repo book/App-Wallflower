@@ -227,22 +227,25 @@ sub _host_regexp {
 L<App::Wallflower> is a container for functions for the L<wallflower>
 program.
 
+=method new_with_options
 
-=method new_with_options( \@argv )
+    App::Wallflower->new_with_options( \@ARGV );
 
 Process options in the provided array reference (modifying it),
 and return a object ready to be C<run()>.
 
 See L<wallflower> for the list of options and their usage.
 
-=method new( option => \%option, args => \@args )
+=method new
+
+    App::Wallflower->new( option => \%option, args => \@args );
 
 Create an object ready to be C<run()>.
 
 C<option> is a hashref of options as produced by L<Getopt::Long>, and
 C<args> is an array ref of optional arguments to be processed by C<run()>
 
-=method run( )
+=method run
 
 Make L<wallflower> dance.
 

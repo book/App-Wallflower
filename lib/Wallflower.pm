@@ -186,7 +186,9 @@ sub get {
 Given a URL and a L<Plack> application, a L<Wallflower> object will
 save the corresponding response to a file.
 
-=method new( %args )
+=method new
+
+    my $w = Wallflower->new( %args );
 
 Create a new L<Wallflower> object.
 
@@ -224,7 +226,9 @@ that position.
 
 =back
 
-=method get( $url )
+=method get
+
+    my $response = $w->get( $url );
 
 Perform a C<GET> request for C<$url> through the application, and
 if successful, save the result to a filename derived from C<$url> by
@@ -252,7 +256,9 @@ with the modification timestamp for this file as the value.
 If the application sends a C<304 Not modified> in response,
 the target file will not be modified.
 
-=method target( $uri )
+=method target
+
+    my $target = $w->target($uri);
 
 Return the filename where the content of C<$uri> will be saved.
 

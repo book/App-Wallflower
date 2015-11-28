@@ -81,7 +81,9 @@ sub _links_from_css {
 This module provides methods to extract links from the files
 produced by L<Wallflower>'s C<get()> method.
 
-=func links_from( $response, $url )
+=func links_from
+
+    my @links = links_from( $response, $url );
 
 Returns all links found in the response body, depending on its content type.
 
