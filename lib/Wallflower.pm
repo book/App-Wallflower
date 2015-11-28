@@ -165,9 +165,13 @@ sub get {
 
 1;
 
-# ABSTRACT: Stick Plack applications to the wallpaper
+__END__
 
 =pod
+
+=head1 NAME
+
+Wallflower - Stick Plack applications to the wallpaper
 
 =head1 SYNOPSIS
 
@@ -186,7 +190,9 @@ sub get {
 Given a URL and a L<Plack> application, a L<Wallflower> object will
 save the corresponding response to a file.
 
-=method new
+=head1 METHODS
+
+=head2 new
 
     my $w = Wallflower->new( %args );
 
@@ -226,7 +232,7 @@ that position.
 
 =back
 
-=method get
+=head2 get
 
     my $response = $w->get( $url );
 
@@ -256,7 +262,7 @@ with the modification timestamp for this file as the value.
 If the application sends a C<304 Not modified> in response,
 the target file will not be modified.
 
-=method target
+=head2 target
 
     my $target = $w->target($uri);
 
@@ -273,6 +279,17 @@ must be absolute.
 
 Accessors (getters only) exist for all parameters
 to C<new()> and bear the same name.
+
+=head1 AUTHOR
+
+Philippe Bruhat (BooK) <book@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2012-2015 by Philippe Bruhat (BooK).
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
 
