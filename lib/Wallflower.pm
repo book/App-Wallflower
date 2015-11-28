@@ -244,7 +244,7 @@ C<$url> can be either a string or a L<URI> object, representing an
 absolute URL (the path must start with a C</>). The scheme, host, port,
 and query string are ignored if present.
 
-The return value is very similar to a L<Plack> application's:
+The return value is very similar to a L<Plack> application response:
 
    [ $status, $headers, $file ]
 
