@@ -149,6 +149,23 @@ a final C</>.
 At this point, you know that an application that treats F</thunk> ("file")
 and F</thunk/> ("directory") differently will B<not work> with L<wallflower>.
 
+L<wallflower> will show a status code of C<999> (not a valid HTTP status)
+in the following two cases:
+
+=over 4
+
+=item *
+
+when trying to create F<thunk/pam> after having created a F<thunk> file,
+(warning: C<Can't open thunk/pam for writing: Not a directory>)
+
+=item *
+
+when trying to create F<thunk> after having created a F<thunk/> directory.
+(warning: C<Can't open thunk for writing: Is a directory>)
+
+=back
+
 See also the section L</"All URLs should have an extension">, for why you
 should avoid extensionless URLs.
 
