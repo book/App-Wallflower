@@ -40,6 +40,13 @@ my @callbacks = (
               $file && " => $file [${\-s $file}]";
         },
     ],
+    [
+        tap => sub {
+            my ( $url, $response ) = @_;
+            my ( $status, $headers, $file ) = @$response;
+            is( $status, 200, $url->path );
+        },
+    ],
 );
 
 sub new_with_options {
@@ -61,7 +68,7 @@ sub new_with_options {
         'index=s',       'environment=s',
         'follow!',       'filter|files|F',
         'quiet',         'include|INC=s@',
-        'verbose!',      'errors!',
+        'verbose!',      'errors!',                 'tap!',
         'host=s@',
         'url|uri=s',
         'help',          'manual',
@@ -111,6 +118,12 @@ sub new {
     # application is required
     croak "Option application is required" if !exists $option{application};
 
+    if ( $option{tap} ) {
+        require Test::More;
+        import Test::More;
+        $option{quiet} = 1;    # --tap = --quiet
+    }
+
     # --quiet = --no-verbose --no-errors
     $option{verbose} = $option{errors} = 0 if $option{quiet};
 
@@ -150,6 +163,7 @@ sub run {
     ( my $args, $self->{args} ) = ( $self->{args}, [] );
     my $method = $self->{option}{filter} ? '_process_args' : '_process_queue';
     $self->$method(@$args);
+    done_testing() if $self->{option}{tap};
 }
 
 sub _process_args {
