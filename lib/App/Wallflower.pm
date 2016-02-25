@@ -122,6 +122,10 @@ sub new {
         require Test::More;
         import Test::More;
         $option{quiet} = 1;    # --tap = --quiet
+        if ( !exists $option{destination} ) {
+            require File::Temp;
+            $option{destination} = File::Temp::tempdir( CLEANUP => 1 );
+        }
     }
 
     # --quiet = --no-verbose --no-errors
