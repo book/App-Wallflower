@@ -28,7 +28,7 @@ my @callbacks = (
             my ( $url, $response ) = @_;
             my ( $status, $headers, $file ) = @$response;
             return if $status == 200;
-            printf "$status %s%s\n", $url->path;
+            printf "$status %s\n", $url->path;
         },
     ],
     [
