@@ -85,6 +85,24 @@ It's therefore possible to hide the dynamic parts of the application
 in the C<development> environment, while only the static elements are
 reachable from the C<deployment> environment.
 
+=head2 Speed up site regeneration by sending 304 responses
+
+As of version 1.008, if the application sends the C<Last-Modified> header,
+it we be used to set the modification time of the target file.
+
+Since version 1.002, if the target file exists, L<wallflower> will
+send the C<If-Modified-Since> header with its modification date. If the
+application sends a C<304 Not Modified> response, the target file will
+not be modified.
+
+Note that since L<wallflower> works without using the network, this
+feature is only really useful if the response generation takes time
+and it's possible to decide to send a C<304 Not Modified> I<without>
+computing the entire response content.
+
+See L<Plack::Middleware::ConditionalGET> for basic support of C<304>
+responses.
+
 =head2 Make all URLs eventually reachable from the root
 
 By default, L<wallflower> starts by loading C</>, and automatically
