@@ -6,7 +6,8 @@ use warnings;
 use Plack::Util ();
 use Path::Class;
 use URI;
-use HTTP::Date qw( time2str );
+use HTTP::Date qw( time2str str2time);
+use HTTP::Headers::Fast;    # same as Plack::Response
 use Carp;
 
 # quick getters
@@ -158,6 +159,13 @@ sub get {
 
         # finish
         close $fh;
+
+        # if the app sent Last-Modified, set the local file date to that
+        if ( my $last_modified = HTTP::Headers::Fast->new(@$headers)
+             ->header('Last-Modified') ) {
+            my $epoch = str2time( $last_modified );
+            utime $epoch, $epoch, $file;
+        }
     }
 
     return [ $status, $headers, $file ];
@@ -255,6 +263,9 @@ the content has been saved.
 If an error is encountered when trying to open the file, C<$status>
 will be set to C<999> (an invalid HTTP status code), and a warning will
 be emitted.
+
+If the application sends the C<Last-Modified> header in its response,
+the modification date of the target file will be modified accordingly.
 
 If a file exists at the location pointed to by the target, a
 C<If-Modified-Since> header is added to the Plack environment,
