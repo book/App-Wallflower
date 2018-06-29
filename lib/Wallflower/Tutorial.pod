@@ -220,9 +220,23 @@ A comparison of using Wget and Wallflower to generate static web sites.
 
 =back
 
-If you're interested in static web site generators, the
-open-company L<Bevry|https://bevry.me/> maintains a list of them at:
+If you're interested in static web site generators, you can check:
+
+=over 4
+
+=item *
+
 L<https://github.com/bevry/staticsitegenerators-list>
+
+A list maintained by the open-company L<Bevry|https://bevry.me/>.
+
+=item *
+
+L<https://staticsitegenerators.net/>
+
+The definitive listing of Static Site Generators (according to the site).
+
+=back
 
 =head1 AUTHOR
 
