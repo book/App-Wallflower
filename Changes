@@ -2,6 +2,11 @@ Revision history for App-Wallflower
 
 {{$NEXT}}
 
+1.008 2018-07-02 BOOK
+    - fix some warnings when an error response is received
+    - add a --tap option to output TAP
+    - the target file modification date is set according to Last-Modified
+
 1.007 2015-11-30 BOOK
     - return a status code 999, warn, and continue processing,
       when there is a file/directory error
