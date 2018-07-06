@@ -172,7 +172,8 @@ sub run {
 
 sub _process_args {
     my $self = shift;
-    local @ARGV = @_;
+    local *ARGV;
+    @ARGV = @_;
     while (<>) {
 
         # ignore blank lines and comments
