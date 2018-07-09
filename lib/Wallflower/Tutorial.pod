@@ -112,7 +112,7 @@ all reachable URLs have been processed.
 The simplest way to generate the full static site is to make
 sure that all URLs can be reached by repeatedly following links from the root.
 
-When using the C<--url> option to "mount" your application under some path,
+When using the B<--url> option to "mount" your application under some path,
 don't forget to call L<wallflower> with that path as the root:
 
     wallflower --application myapp.psgi --url http://localhost/myapp /myapp/
