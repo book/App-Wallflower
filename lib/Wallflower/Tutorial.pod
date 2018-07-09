@@ -117,6 +117,16 @@ don't forget to call L<wallflower> with that path as the root:
 
     wallflower --application myapp.psgi --url http://localhost/myapp /myapp/
 
+In case all of the application URL are not reachable from the root, it
+is possible to pass L<wallflower> a list of starting points (one per line),
+using the B<--filter> option:
+
+    wallflower --application myapp.psgi --filter urls.txt
+
+Note that the B<--filter> option turns L<wallflower> into a "filter" command:
+it takes a list of files as argument, and if no file is given, it reads the
+list of URL from the command-line.
+
 =head1 URL SEMANTICS COMPARED TO DIRECTORY SEMANTICS
 
 A Plack application deals with URLs. Nothing prevents the application

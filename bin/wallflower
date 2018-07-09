@@ -40,7 +40,7 @@ as long as the shorter version is unambiguous.
  --no-follow                (default = follow)
 
  --filter                   Arguments are files containing lists of URLs
- --files
+ --files                    (if no file is given, read from standard input)
  -F
 
  --url         <url>        URL of the production site. If the URL has
