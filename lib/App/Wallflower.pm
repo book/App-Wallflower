@@ -72,7 +72,7 @@ sub new_with_options {
         'host=s@',
         'url|uri=s',
         'help',          'manual',
-        'tutorial',
+        'tutorial',      'version',
     ) or pod2usage(
         -input   => $input,
         -verbose => 1,
@@ -92,6 +92,8 @@ sub new_with_options {
             Pod::Find::pod_where( { -inc => 1 }, 'Wallflower::Tutorial' );
         },
     ) if $option{tutorial};
+    print "wallflower version $Wallflower::VERSION\n" and exit
+      if $option{version};
 
     # application is required
     pod2usage(

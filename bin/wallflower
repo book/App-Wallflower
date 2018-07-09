@@ -65,6 +65,7 @@ as long as the shorter version is unambiguous.
  --help                     Print a short help summary and exit
  --manual                   Print the full manual page and exit
  --tutorial                 Print the tutorial and exit
+ --version                  Print wallflower version information and exit
 
 Options marked with * can be repeated as necessary.
 
