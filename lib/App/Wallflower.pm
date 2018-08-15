@@ -10,6 +10,7 @@ use Plack::Util ();
 use URI;
 use Wallflower;
 use Wallflower::Util qw( links_from );
+use List::Util qw( uniqstr );
 
 sub _default_options {
     return (
@@ -151,7 +152,7 @@ sub new {
         option     => \%option,
         args       => $args,
         callbacks  => \@cb,
-        seen       => {},
+        seen       => {},                # keyed on $url->path
         wallflower => Wallflower->new(
             application => ref $option{application}
                 ? $option{application}
@@ -211,7 +212,10 @@ sub _process_queue {
         # obtain links to resources
         my ( $status, $headers, $file ) = @$response;
         if ( $status eq '200' && $follow ) {
-            push @queue, links_from( $response => $url );
+            @queue = uniqstr
+              grep !ref || !$seen->{$_->path},
+              @queue,
+             links_from( $response => $url );
         }
 
         # follow 301 Moved Permanently
