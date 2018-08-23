@@ -192,22 +192,7 @@ sub _has_seen {
             Path::Tiny->tempdir( CLEANUP => 1 );
         };
 
-        # read from the shared seen file
-        my $file = $self->{_ipc_dir_}->child('__SEEN__');
-        my $fh = $self->{_seen_fh_} ||= do {
-            open my $fh, -e $file ? '+<' : '+>', $file
-              or die "Can't open $file in read-write mode: $!";
-            $fh->autoflush(1);
-            $fh;
-        };
-
-        # write to the shared seen file
-        flock( $fh, LOCK_EX() ) or die "Cannot lock $file: $!\n";
-        seek( $fh, 0, SEEK_CUR() );
-        while (<$fh>) { chomp; $self->{seen}{$_}++; }
-        seek( $fh, 0, SEEK_END() );
-        print $fh "$path\n" if !$self->{seen}{$path};
-        flock( $fh, LOCK_UN() ) or die "Cannot unlock $file: $!\n";
+        $self->_update_seen($path);
 
         # clean the queue after the update
         @$queue = uniqstr grep !ref || !$self->{seen}{$_->path }, @$queue;
@@ -238,6 +223,31 @@ sub _has_seen {
     }
 
     return $self->{seen}{$path}++;
+}
+
+sub _update_seen {
+    my ( $self, @seen ) = @_;
+    my $seen = $self->{seen};
+
+    # read from the shared seen file
+    my $file = $self->{_ipc_dir_}->child('__SEEN__');
+    my $fh = $self->{_seen_fh_} ||= do {
+        open my $fh, -e $file ? '+<' : '+>', $file
+          or die "Can't open $file in read-write mode: $!";
+        $fh->autoflush(1);
+        $fh;
+    };
+
+    flock( $fh, LOCK_EX() ) or die "Cannot lock $file: $!\n";
+    seek( $fh, 0, SEEK_CUR() );
+    while (<$fh>) { chomp; $seen->{$_}++; }
+
+    # write to the shared seen file
+    for my $path (@seen) {
+        seek( $fh, 0, SEEK_END() );
+        print $fh "$path\n" if !$seen->{$path};
+    }
+    flock( $fh, LOCK_UN() ) or die "Cannot unlock $file: $!\n";
 }
 
 sub _wait_for_kids {
