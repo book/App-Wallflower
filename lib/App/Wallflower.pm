@@ -72,6 +72,7 @@ sub new_with_options {
         'verbose!',      'errors!',                 'tap!',
         'host=s@',
         'url|uri=s',
+        'parallel=i',
         'help',          'manual',
         'tutorial',      'version',
     ) or pod2usage(
@@ -124,6 +125,11 @@ sub new {
     if ( $option{tap} ) {
         require Test::More;
         import Test::More;
+        if ( $option{parallel} ) {
+            my $tb = Test::Builder->new;
+            $tb->no_plan;
+            $tb->use_numbers(0);
+        }
         $option{quiet} = 1;    # --tap = --quiet
         if ( !exists $option{destination} ) {
             require File::Temp;
@@ -170,7 +176,82 @@ sub run {
     ( my $args, $self->{args} ) = ( $self->{args}, [] );
     my $method = $self->{option}{filter} ? '_process_args' : '_process_queue';
     $self->$method(@$args);
-    done_testing() if $self->{option}{tap};
+    if    ( $self->{option}{parallel} ) { $self->_wait_for_kids; }
+    elsif ( $self->{option}{tap} )      { done_testing(); }
+}
+
+sub _has_seen {
+    my ( $self, $path, $queue ) = @_;
+
+    if ( $self->{option}{parallel} ) {
+        $self->{_parent_}  ||= $$;
+        $self->{_ipc_dir_} ||= do {
+            require Path::Tiny;
+            require Fcntl;
+            import Fcntl qw( :seek :flock );
+            Path::Tiny->tempdir( CLEANUP => 1 );
+        };
+
+        # read from the shared seen file
+        my $file = $self->{_ipc_dir_}->child('__SEEN__');
+        my $fh = $self->{_seen_fh_} ||= do {
+            open my $fh, -e $file ? '+<' : '+>', $file
+              or die "Can't open $file in read-write mode: $!";
+            $fh->autoflush(1);
+            $fh;
+        };
+
+        # write to the shared seen file
+        flock( $fh, LOCK_EX() ) or die "Cannot lock $file: $!\n";
+        seek( $fh, 0, SEEK_CUR() );
+        while (<$fh>) { chomp; $self->{seen}{$_}++; }
+        seek( $fh, 0, SEEK_END() );
+        print $fh "$path\n" if !$self->{seen}{$path};
+        flock( $fh, LOCK_UN() ) or die "Cannot unlock $file: $!\n";
+
+        # clean the queue after the update
+        @$queue = uniqstr grep !ref || !$self->{seen}{$_->path }, @$queue;
+
+        # fork new kids if necessary
+        if (   @$queue
+            && $self->{_parent_} == $$
+            && @{[ glob( $self->{_ipc_dir_}->child('*') ) ]}  <
+            $self->{option}{parallel} )
+        {
+            my @seed = splice @$queue, 0, @$queue / 2;
+            if ( not my $pid = fork ) {
+                $self->{_pidfile_} = File::Temp->new(
+                    TEMPLATE => "pid-$$-XXXX",
+                    DIR      => $self->{_ipc_dir_}
+                );
+                @$queue = @seed;
+                delete $self->{_seen_fh_};    # will reopen
+            }
+            elsif ( !defined $pid ) {
+                warn "Couldn't fork: $!";
+                unshift @$queue, @seed;
+            }
+            else {
+                return ++$self->{seen}{$path}; # $path will be processed by the child
+            }
+        }
+    }
+
+    return $self->{seen}{$path}++;
+}
+
+sub _wait_for_kids {
+    my ($self) = @_;
+    return if $self->{_parent_} != $$;
+    sleep 1 while @{ [ glob( $self->{_ipc_dir_}->child('pid-*') ) ] } > 1;
+    if( $self->{option}{tap} ) {
+        seek my $fh = $self->{_seen_fh_}, 0, SEEK_SET();
+        my $count;
+        $count++ while <$fh>;
+        my $tb = Test::Builder->new;
+        $tb->no_ending(1);
+        $tb->done_testing($count);
+    }
 }
 
 sub _process_args {
@@ -200,7 +281,7 @@ sub _process_queue {
     while (@queue) {
 
         my $url = URI->new( shift @queue );
-        next if $seen->{ $url->path }++;
+        next if $self->_has_seen( $url->path, \@queue );
         next if $url->scheme && ! eval { $url->host =~ $host_ok };
 
         # get the response
