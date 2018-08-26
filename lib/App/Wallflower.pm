@@ -154,7 +154,7 @@ sub new {
 
     local $ENV{PLACK_ENV} = $option{environment};
     local @INC = ( @{ $option{inc} }, @INC );
-    return bless {
+    my $self = {
         option     => \%option,
         args       => $args,
         callbacks  => \@cb,
@@ -167,8 +167,18 @@ sub new {
             ( index       => $option{index}       )x!! $option{index},
             ( url         => $option{url}         )x!! $option{url},
         ),
-    }, $class;
+    };
 
+    # setup parallel processing
+    if ( $self->{option}{parallel} ) {
+        require Path::Tiny;
+        require Fcntl;
+        import Fcntl qw( :seek :flock );
+        $self->{_parent_} = $$;
+        $self->{_ipc_dir_} = Path::Tiny->tempdir( CLEANUP => 1 );
+    }
+
+    return bless $self, $class;
 }
 
 sub run {
@@ -184,13 +194,6 @@ sub _has_seen {
     my ( $self, $path, $queue ) = @_;
 
     if ( $self->{option}{parallel} ) {
-        $self->{_parent_}  ||= $$;
-        $self->{_ipc_dir_} ||= do {
-            require Path::Tiny;
-            require Fcntl;
-            import Fcntl qw( :seek :flock );
-            Path::Tiny->tempdir( CLEANUP => 1 );
-        };
 
         $self->_update_seen($path);
 
