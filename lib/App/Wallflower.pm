@@ -190,6 +190,14 @@ sub run {
     elsif ( $self->{option}{tap} )      { done_testing(); }
 }
 
+sub __open_fh {
+    my ($file) = @_;
+    open my $fh, -e $file ? '+<' : '+>', $file
+      or die "Can't open $file in read-write mode: $!";
+    $fh->autoflush(1);
+    $fh;
+}
+
 sub _has_seen {
     my ( $self, $path, $queue ) = @_;
 
@@ -233,15 +241,9 @@ sub _update_seen {
     my $seen = $self->{seen};
 
     # read from the shared seen file
-    my $file = $self->{_ipc_dir_}->child('__SEEN__');
-    my $fh = $self->{_seen_fh_} ||= do {
-        open my $fh, -e $file ? '+<' : '+>', $file
-          or die "Can't open $file in read-write mode: $!";
-        $fh->autoflush(1);
-        $fh;
-    };
-
-    flock( $fh, LOCK_EX() ) or die "Cannot lock $file: $!\n";
+    my $SEEN = $self->{_ipc_dir_}->child('__SEEN__');
+    my $fh = $self->{_seen_fh_} ||= __open_fh($SEEN);
+    flock( $fh, LOCK_EX() ) or die "Cannot lock $SEEN: $!\n";
     seek( $fh, 0, SEEK_CUR() );
     while (<$fh>) { chomp; $seen->{$_}++; }
 
@@ -250,7 +252,7 @@ sub _update_seen {
         seek( $fh, 0, SEEK_END() );
         print $fh "$path\n" if !$seen->{$path};
     }
-    flock( $fh, LOCK_UN() ) or die "Cannot unlock $file: $!\n";
+    flock( $fh, LOCK_UN() ) or die "Cannot unlock $SEEN: $!\n";
 }
 
 sub _wait_for_kids {
