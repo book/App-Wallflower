@@ -174,7 +174,8 @@ sub new {
         require Path::Tiny;
         require Fcntl;
         import Fcntl qw( :seek :flock );
-        $self->{_parent_} = $$;
+        $self->{_parent_}  = $$;
+        $self->{_forked_}  = 0;
         $self->{_ipc_dir_} = Path::Tiny->tempdir( CLEANUP => 1 );
     }
 
@@ -211,8 +212,7 @@ sub _has_seen {
         # fork new kids if necessary
         if (   @$queue
             && $self->{_parent_} == $$
-            && @{[ glob( $self->{_ipc_dir_}->child('*') ) ]}  <
-            $self->{option}{parallel} )
+            && $self->{_forked_} < $self->{option}{parallel} - 1 )
         {
             my @seed = splice @$queue, 0, @$queue / 2;
             if ( not my $pid = fork ) {
@@ -228,6 +228,7 @@ sub _has_seen {
                 unshift @$queue, @seed;
             }
             else {
+                $self->{_forked_}++;
                 return ++$self->{seen}{$path}; # $path will be processed by the child
             }
         }
@@ -258,7 +259,7 @@ sub _update_seen {
 sub _wait_for_kids {
     my ($self) = @_;
     return if $self->{_parent_} != $$;
-    sleep 1 while @{ [ glob( $self->{_ipc_dir_}->child('pid-*') ) ] } > 1;
+    sleep 1 while @{ [ glob( $self->{_ipc_dir_}->child('pid-*') ) ] };
     if( $self->{option}{tap} ) {
         seek my $fh = $self->{_seen_fh_}, 0, SEEK_SET();
         my $count;
