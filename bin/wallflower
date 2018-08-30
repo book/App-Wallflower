@@ -33,6 +33,8 @@ as long as the shorter version is unambiguous.
                             usually development, deployment, or test
                             (default: deployment)
 
+ --parallel    <count>      Number of processes to run in parallel
+
  --index       <filename>   Name of index file for URLs ending in /
                             (default: index.html)
 
