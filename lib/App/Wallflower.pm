@@ -11,6 +11,7 @@ use URI;
 use Wallflower;
 use Wallflower::Util qw( links_from );
 use List::Util qw( uniqstr );
+use Path::Tiny;
 
 sub _default_options {
     return (
@@ -132,8 +133,7 @@ sub new {
         }
         $option{quiet} = 1;    # --tap = --quiet
         if ( !exists $option{destination} ) {
-            require File::Temp;
-            $option{destination} = File::Temp::tempdir( CLEANUP => 1 );
+            $option{destination} = Path::Tiny->tempdir( CLEANUP => 1 );
         }
     }
 
@@ -171,7 +171,6 @@ sub new {
 
     # setup parallel processing
     if ( $self->{option}{parallel} ) {
-        require Path::Tiny;
         require Fcntl;
         import Fcntl qw( :seek :flock );
         $self->{_parent_}  = $$;
@@ -216,9 +215,9 @@ sub _has_seen {
         {
             my @seed = splice @$queue, 0, @$queue / 2;
             if ( not my $pid = fork ) {
-                $self->{_pidfile_} = File::Temp->new(
+                $self->{_pidfile_} = Path::Tiny->tempfile(
                     TEMPLATE => "pid-$$-XXXX",
-                    DIR      => $self->{_ipc_dir_}
+                    DIR      => $self->{_ipc_dir_},
                 );
                 @$queue = @seed;
                 delete $self->{_seen_fh_};    # will reopen
