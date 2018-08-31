@@ -123,6 +123,7 @@ sub new {
     # application is required
     croak "Option application is required" if !exists $option{application};
 
+    # setup TAP
     if ( $option{tap} ) {
         require Test::More;
         import Test::More;
@@ -159,6 +160,7 @@ sub new {
         args       => $args,
         callbacks  => \@cb,
         seen       => {},                # keyed on $url->path
+        todo       => [],
         wallflower => Wallflower->new(
             application => ref $option{application}
                 ? $option{application}
@@ -175,7 +177,7 @@ sub new {
         import Fcntl qw( :seek :flock );
         $self->{_parent_}  = $$;
         $self->{_forked_}  = 0;
-        $self->{_ipc_dir_} = Path::Tiny->tempdir( CLEANUP => 1 );
+        $self->{_ipc_dir_} = Path::Tiny->tempdir( CLEANUP => 1, TEMPLATE => 'wallflower-XXXX' );
     }
 
     return bless $self, $class;
@@ -198,61 +200,131 @@ sub __open_fh {
     $fh;
 }
 
-sub _has_seen {
-    my ( $self, $path, $queue ) = @_;
+sub _push_todo {
+    my ( $self, @items ) = @_;
+    my $seen    = $self->{seen};
+    my $todo    = $self->{todo};
+    my $host_ok = $self->_host_regexp;
+
+    # add to the to-do list
+    @items = uniqstr                       # unique
+      grep !$seen->{$_},                   # not already seen
+      map ref() ? $_->path : $_,           # paths
+      grep !ref || !$_->scheme             # from URI
+        || eval { $_->host =~ $host_ok },  # pointing only to expected hosts
+      @items;
+
+    push @$todo, @items;
 
     if ( $self->{option}{parallel} ) {
 
-        $self->_update_seen($path);
+        # aggregate all child todo into ours and save it as __TODO__
+        if ( $self->{_parent_} == $$ ) {
+            my $fh = File::Temp->new(
+                TEMPLATE => "__TODO__-XXXX",
+                DIR      => $self->{_ipc_dir_},
+            );
+            local *ARGV;
+            if ( @ARGV = glob $self->{_ipc_dir_}->child('todo-*') ) {
+                no warnings 'inplace';   # the file may already be gone
+                print $fh @$todo = uniqstr grep !$seen->{$_},
+                  <>, map "$_\n", @$todo;
+                chomp @$todo;
+                close $fh;
+                my $TODO = $self->{_ipc_dir_}->child('__TODO__');
+                rename "$fh", $TODO
+                  or die "Can't rename $fh to $TODO: $!";
+            }
+        }
 
-        # clean the queue after the update
-        @$queue = uniqstr grep !ref || !$self->{seen}{$_->path }, @$queue;
+        # save the child todo
+        else {
+            return if !@items; # no update
+
+            my $fh = File::Temp->new(
+                TEMPLATE => "todo-$$-XXXX",
+                DIR      => $self->{_ipc_dir_},
+            );
+            print $fh map "$_\n", @$todo;
+            close $fh;
+            $self->{_todo_fh_} = $fh;    # deletes previous one
+        }
+    }
+}
+
+sub _next_todo {
+    my ($self) = @_;
+    my $seen   = $self->{seen};
+    my $todo   = $self->{todo};
+    my $next;
+
+    if ( $self->{option}{parallel} ) {
+
+      TODO:
+
+        # read from the shared seen file
+        my $SEEN = $self->{_ipc_dir_}->child('__SEEN__');
+        my $seen_fh = $self->{_seen_fh_} ||= __open_fh($SEEN);
+        flock( $seen_fh, LOCK_EX() ) or die "Cannot lock $SEEN: $!\n";
+        seek( $seen_fh, 0, SEEK_CUR() );
+        while (<$seen_fh>) { chomp; $seen->{$_}++; }
+
+        # find a todo item not seen
+        ( $next, @$todo ) = uniqstr grep !$seen->{$_}, @$todo;
+
+        if ( !defined $next ) {
+
+            # read from the shared todo
+            my $TODO    = $self->{_ipc_dir_}->child('__TODO__');
+            my $todo_fh = __open_fh($TODO);
+            flock( $todo_fh, LOCK_EX() ) or die "Cannot lock $TODO: $!\n";
+            @$todo = <$todo_fh>;
+            flock( $todo_fh, LOCK_UN() ) or die "Cannot unlock $TODO: $!\n";
+            chomp(@$todo);
+
+            # try again
+            ( $next, @$todo ) = uniqstr grep !$seen->{$_}, @$todo;
+
+        }
+        else {
+
+            # write to the shared seen file
+            seek( $seen_fh, 0, SEEK_END() );
+            print $seen_fh "$next\n";
+        }
+        flock( $seen_fh, LOCK_UN() ) or die "Cannot unlock $SEEN: $!\n";
 
         # fork new kids if necessary
-        if (   @$queue
+        if (   @$todo
             && $self->{_parent_} == $$
             && $self->{_forked_} < $self->{option}{parallel} - 1 )
         {
-            my @seed = splice @$queue, 0, @$queue / 2;
             if ( not my $pid = fork ) {
                 $self->{_pidfile_} = Path::Tiny->tempfile(
                     TEMPLATE => "pid-$$-XXXX",
                     DIR      => $self->{_ipc_dir_},
                 );
-                @$queue = @seed;
                 delete $self->{_seen_fh_};    # will reopen
             }
             elsif ( !defined $pid ) {
                 warn "Couldn't fork: $!";
-                unshift @$queue, @seed;
             }
             else {
                 $self->{_forked_}++;
-                return ++$self->{seen}{$path}; # $path will be processed by the child
+                $seen->{$next}++;             # the child will handle this one
+                goto TODO;                    # so pick another one
             }
         }
     }
-
-    return $self->{seen}{$path}++;
-}
-
-sub _update_seen {
-    my ( $self, @seen ) = @_;
-    my $seen = $self->{seen};
-
-    # read from the shared seen file
-    my $SEEN = $self->{_ipc_dir_}->child('__SEEN__');
-    my $fh = $self->{_seen_fh_} ||= __open_fh($SEEN);
-    flock( $fh, LOCK_EX() ) or die "Cannot lock $SEEN: $!\n";
-    seek( $fh, 0, SEEK_CUR() );
-    while (<$fh>) { chomp; $seen->{$_}++; }
-
-    # write to the shared seen file
-    for my $path (@seen) {
-        seek( $fh, 0, SEEK_END() );
-        print $fh "$path\n" if !$seen->{$path};
+    else {
+        ( $next, @$todo ) = uniqstr grep !$seen->{$_}, @$todo;
     }
-    flock( $fh, LOCK_UN() ) or die "Cannot unlock $SEEN: $!\n";
+
+    # nothing to do
+    return undef if !defined $next;
+
+    $seen->{$next}++;
+    return URI->new($next);
 }
 
 sub _wait_for_kids {
@@ -287,17 +359,13 @@ sub _process_queue {
     my ( $self,       @queue ) = @_;
     my ( $wallflower, $seen )  = @{$self}{qw( wallflower seen )};
     my $follow  = $self->{option}{follow};
-    my $host_ok = $self->_host_regexp;
 
     # I'm just hanging on to my friend's purse
     local $ENV{PLACK_ENV} = $self->{option}{environment};
     local @INC = ( @{ $self->{option}{inc} }, @INC );
-    @queue = ('/') if !@queue;
-    while (@queue) {
+    $self->_push_todo( @queue ? @queue : ('/') );
 
-        my $url = URI->new( shift @queue );
-        next if $self->_has_seen( $url->path, \@queue );
-        next if $url->scheme && ! eval { $url->host =~ $host_ok };
+    while ( my $url = $self->_next_todo ) {
 
         # get the response
         my $response = $wallflower->get($url);
@@ -308,10 +376,7 @@ sub _process_queue {
         # obtain links to resources
         my ( $status, $headers, $file ) = @$response;
         if ( $status eq '200' && $follow ) {
-            @queue = uniqstr
-              grep !ref || !$seen->{$_->path},
-              @queue,
-             links_from( $response => $url );
+            $self->_push_todo( links_from( $response => $url ) );
         }
 
         # follow 301 Moved Permanently
