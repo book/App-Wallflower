@@ -175,8 +175,9 @@ sub new {
     if ( $self->{option}{parallel} ) {
         require Fcntl;
         import Fcntl qw( :seek :flock );
-        $self->{_parent_} = $$;
-        $self->{_ipc_dir_} = Path::Tiny->tempdir( CLEANUP => 1 );
+        $self->{_parent_}  = $$;
+        $self->{_forked_}  = 0;
+        $self->{_ipc_dir_} = Path::Tiny->tempdir( CLEANUP => 1, TEMPLATE => 'wallflower-XXXX' );
     }
 
     return bless $self, $class;
