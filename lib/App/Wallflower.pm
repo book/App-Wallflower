@@ -203,8 +203,10 @@ sub __open_fh {
 sub _push_todo {
     my ( $self, @items ) = @_;
     my $seen    = $self->{seen};
+    my $todo    = $self->{todo};
     my $host_ok = $self->_host_regexp;
 
+    # add to the to-do list
     @items = uniqstr                       # unique
       grep !$seen->{$_},                   # not already seen
       map ref() ? $_->path : $_,           # paths
@@ -212,26 +214,49 @@ sub _push_todo {
         || eval { $_->host =~ $host_ok },  # pointing only to expected hosts
       @items;
 
-    return if !@items;
+    push @$todo, @items;
 
-    # add to the to-do list
     if ( $self->{option}{parallel} ) {
-        my $TODO = $self->{_ipc_dir_}->child('__TODO__');
-        my $todo_fh = $self->{_todo_fh_} ||= __open_fh($TODO);
-        flock( $todo_fh, LOCK_EX() ) or die "Cannot lock $TODO: $!\n";
-        seek( $todo_fh, 0, SEEK_END() );
-        print $todo_fh "$_\n" for @items;
-        flock( $todo_fh, LOCK_UN() ) or die "Cannot unlock $TODO: $!\n";
-    }
-    else {
-        push @{ $self->{todo} }, @items;
+
+        # aggregate all child todo into ours and save it as __TODO__
+        if ( $self->{_parent_} == $$ ) {
+            my $fh = File::Temp->new(
+                TEMPLATE => "__TODO__-XXXX",
+                DIR      => $self->{_ipc_dir_},
+            );
+            local *ARGV;
+            if ( @ARGV = glob $self->{_ipc_dir_}->child('todo-*') ) {
+                no warnings 'inplace';   # the file may already be gone
+                print $fh @$todo = uniqstr grep !$seen->{$_},
+                  <>, map "$_\n", @$todo;
+                chomp @$todo;
+                close $fh;
+                my $TODO = $self->{_ipc_dir_}->child('__TODO__');
+                rename "$fh", $TODO
+                  or die "Can't rename $fh to $TODO: $!";
+            }
+        }
+
+        # save the child todo
+        else {
+            return if !@items; # no update
+
+            my $fh = File::Temp->new(
+                TEMPLATE => "todo-$$-XXXX",
+                DIR      => $self->{_ipc_dir_},
+            );
+            print $fh map "$_\n", @$todo;
+            close $fh;
+            $self->{_todo_fh_} = $fh;    # deletes previous one
+        }
     }
 }
 
 sub _next_todo {
-    my ( $self ) = @_;
-    my $seen = $self->{seen};
-    my ( $next, @todo );
+    my ($self) = @_;
+    my $seen   = $self->{seen};
+    my $todo   = $self->{todo};
+    my $next;
 
     if ( $self->{option}{parallel} ) {
 
@@ -244,53 +269,54 @@ sub _next_todo {
         seek( $seen_fh, 0, SEEK_CUR() );
         while (<$seen_fh>) { chomp; $seen->{$_}++; }
 
-        # read from the shared todo
-        my $TODO = $self->{_ipc_dir_}->child('__TODO__');
-        my $todo_fh = $self->{_todo_fh_} ||= __open_fh($TODO);
-        flock( $todo_fh, LOCK_EX() ) or die "Cannot lock $TODO: $!\n";
-        seek( $todo_fh, 0, SEEK_SET() );
-        my @todo = <$todo_fh>;
-        chomp(@todo);
-
         # find a todo item not seen
-        ($next, @todo) = uniqstr grep !$seen->{$_}, @todo;
+        ( $next, @$todo ) = uniqstr grep !$seen->{$_}, @$todo;
 
-        # save the todo list
-        seek( $todo_fh, 0, SEEK_SET() );
-        print $todo_fh "$_\n" for @todo;
-        truncate $todo_fh, tell $todo_fh;
-        flock( $todo_fh, LOCK_UN() ) or die "Cannot unlock $TODO: $!\n";
+        if ( !defined $next ) {
 
-        # write to the shared seen file
-        if ( defined $next ) {
+            # read from the shared todo
+            my $TODO    = $self->{_ipc_dir_}->child('__TODO__');
+            my $todo_fh = __open_fh($TODO);
+            flock( $todo_fh, LOCK_EX() ) or die "Cannot lock $TODO: $!\n";
+            @$todo = <$todo_fh>;
+            flock( $todo_fh, LOCK_UN() ) or die "Cannot unlock $TODO: $!\n";
+            chomp(@$todo);
+
+            # try again
+            ( $next, @$todo ) = uniqstr grep !$seen->{$_}, @$todo;
+
+        }
+        else {
+
+            # write to the shared seen file
             seek( $seen_fh, 0, SEEK_END() );
             print $seen_fh "$next\n";
         }
         flock( $seen_fh, LOCK_UN() ) or die "Cannot unlock $SEEN: $!\n";
 
         # fork new kids if necessary
-        if (
-            @todo                         # more work to do
-            && $self->{_parent_} == $$    # this is the parent
-            && @{ [ glob( $self->{_ipc_dir_}->child('pid-*') ) ] } <
-            $self->{option}{parallel} - 1 # more children alllowed
-          )
+        if (   @$todo
+            && $self->{_parent_} == $$
+            && $self->{_forked_} < $self->{option}{parallel} - 1 )
         {
             if ( not my $pid = fork ) {
                 $self->{_pidfile_} = Path::Tiny->tempfile(
                     TEMPLATE => "pid-$$-XXXX",
                     DIR      => $self->{_ipc_dir_},
                 );
-                delete @{$self}{qw( _seen_fh_ _todo_fh_ )};    # will reopen
-                goto TODO;
+                delete $self->{_seen_fh_};    # will reopen
             }
             elsif ( !defined $pid ) {
                 warn "Couldn't fork: $!";
             }
+            else {
+                $self->{_forked_}++;
+                $seen->{$next}++;             # the child will handle this one
+                goto TODO;                    # so pick another one
+            }
         }
     }
     else {
-        my $todo = $self->{todo};
         ( $next, @$todo ) = uniqstr grep !$seen->{$_}, @$todo;
     }
 
