@@ -177,7 +177,10 @@ sub new {
         import Fcntl qw( :seek :flock );
         $self->{_parent_}  = $$;
         $self->{_forked_}  = 0;
-        $self->{_ipc_dir_} = Path::Tiny->tempdir( CLEANUP => 1, TEMPLATE => 'wallflower-XXXX' );
+        $self->{_ipc_dir_} = Path::Tiny->tempdir(
+            CLEANUP  => 1,
+            TEMPLATE => 'wallflower-XXXX'
+        );
     }
 
     return bless $self, $class;
@@ -331,7 +334,7 @@ sub _wait_for_kids {
     my ($self) = @_;
     return if $self->{_parent_} != $$;
     sleep 1 while @{ [ glob( $self->{_ipc_dir_}->child('pid-*') ) ] };
-    if( $self->{option}{tap} ) {
+    if ( $self->{option}{tap} ) {
         seek my $fh = $self->{_seen_fh_}, 0, SEEK_SET();
         my $count;
         $count++ while <$fh>;
