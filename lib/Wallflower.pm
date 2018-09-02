@@ -126,7 +126,7 @@ sub get {
         # get a file to save the content in
         my $dir = ( $file = $target )->parent;
         if ( !-e $dir ) {
-            eval { $dir->mkpath } or do {
+            eval { $dir->mkpath; 1; } or do {
                 warn "$@\n" if $@;
                 return [ 999, [], '' ];
             };
