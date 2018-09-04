@@ -195,14 +195,6 @@ sub run {
     elsif ( $self->{option}{tap} )      { done_testing(); }
 }
 
-sub __open_fh {
-    my ($file) = @_;
-    open my $fh, -e $file ? '+<' : '+>', $file
-      or die "Can't open $file in read-write mode: $!";
-    $fh->autoflush(1);
-    $fh;
-}
-
 sub _push_todo {
     my ( $self, @items ) = @_;
     my $seen    = $self->{seen};
@@ -320,7 +312,12 @@ sub _next_todo {
 
         # read from the shared seen file
         my $SEEN = $self->{_ipc_dir_}->child('__SEEN__');
-        my $seen_fh = $self->{_seen_fh_} ||= __open_fh($SEEN);
+        my $seen_fh = $self->{_seen_fh_} ||= do {
+            open my $fh, -e $SEEN ? '+<' : '+>', $SEEN
+              or die "Can't open $SEEN in read-write mode: $!";
+            $fh->autoflush(1);
+            $fh;
+        };
         flock( $seen_fh, LOCK_EX() ) or die "Cannot lock $SEEN: $!\n";
         seek( $seen_fh, 0, SEEK_CUR() );
         while (<$seen_fh>) { chomp; $seen->{$_}++; }
