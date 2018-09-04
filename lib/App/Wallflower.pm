@@ -212,15 +212,13 @@ sub _push_todo {
     push @$todo, @items;
 
     if ( $self->{option}{parallel} ) {
-        if   ( $self->{_parent_} == $$ ) { $self->_aggregate_todo; }
+        if   ( $self->{_parent_} == $$ ) { $self->_aggregate_todo(@items); }
         else                             { $self->_save_todo; }
     }
 }
 
 sub _aggregate_todo {
-    my ($self) = @_;
-    my $seen   = $self->{seen};
-    my $todo   = $self->{todo};
+    my ( $self, @items ) = @_;
     my $TODO   = $self->{_ipc_dir_}->child('__TODO__');
     my $latest = ( stat $TODO )[9] || 0;
 
@@ -232,12 +230,13 @@ sub _aggregate_todo {
         TEMPLATE => "__TODO__-XXXX",
         DIR      => $self->{_ipc_dir_},
     );
-    print $fh @$todo = uniqstr grep !$seen->{$_},
-      @ARGV ? <> : (), map "$_\n", @$todo;
-    chomp @$todo;
+    print $fh uniqstr @ARGV ? <> : (), map "$_\n", @items;
     close $fh;
     rename "$fh", $TODO
       or die "Can't rename $fh to $TODO: $!";
+
+    # the parent to-do list is always empty
+    $self->{todo} = [];
 
     # fork all kids
     if ( !$self->{_forked_} ) {
@@ -259,20 +258,17 @@ sub _aggregate_todo {
         }
         sleep 1;    # give them time to settle
     }
-
-    @$todo = ();
 }
 
 sub _save_todo {
     my ($self) = @_;
-    my $todo   = $self->{todo};
 
     # save the child todo
     my $fh = File::Temp->new(
         TEMPLATE => "todo-$$-XXXX",
         DIR      => $self->{_ipc_dir_},
     );
-    print $fh map "$_\n", @$todo;
+    print $fh map "$_\n", @{ $self->{todo} };
     close $fh;
     $self->{_todo_fh_} = $fh;    # deletes previous one
 }
