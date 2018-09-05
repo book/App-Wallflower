@@ -5,45 +5,56 @@ use File::Temp qw( tempdir );
 use List::Util qw( sum );
 use Wallflower;
 
-# setup test data
-my @tests;
+use Plack::Request;
+
+# basic response builder
+sub build_response {
+    my $env = shift;
+    my $req = Plack::Request->new($env);
+    my $uri = $req->uri;
+    return $uri->path eq '/nope'
+      ? [ 404, [ 'Content-Type' => 'text/plain', 'Content-Length' => 0 ], '' ]
+      : [
+        200,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => length($uri) ],
+        [$uri]
+      ];
+}
 
 # test data is an array ref containing:
 # - quick description of the app
-# - destination directory
 # - the app itself
 # - a list of test url for the app
 #   as [ url, status, headers, file, content ]
+my @tests;
 
-push @tests, [
-    'direct content',
-    tempdir( CLEANUP => 1 ),
-    sub {
-        my $env = shift;
-        require Plack::Request;
-        my $req = Plack::Request->new($env);
-        my $uri = $req->uri;
-
-        [   200,
-            [ 'Content-Type' => 'text/plain', 'Content-Length' => length($uri) ],
-            [ $uri ]
-        ];
-    },
-    [   '/' => 200,
+# some test urls
+my @urls = (
+    [
+        '/' => 200,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 24 ],
         'index.html',
         'http://blah.example.com/'
     ],
-    [   '/clunk' => 200,
+    [
+        '/clunk' => 200,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 29 ],
         'clunk', 'http://blah.example.com/clunk'
     ],
-];
+    [   '/nope' => 404,
+        [ 'Content-Type' => 'text/plain', 'Content-Length' => 0 ],
+        '', ''
+    ],
+);
 
-plan tests => sum map 2 * ( @$_ - 3 ), @tests;
+# setup test data
+push @tests, [ 'direct content', \&build_response, @urls ];
+
+plan tests => sum map 2 * ( @$_ - 2 ), @tests;
 
 for my $t (@tests) {
-    my ( $desc, $dir, $app, @urls ) = @$t;
+    my ( $desc, $app, @urls ) = @$t;
+    my $dir = tempdir( CLEANUP => 1 );
 
     my $wf = Wallflower->new(
         application => $app,
@@ -65,10 +76,10 @@ for my $t (@tests) {
         if ( $status eq '200' ) {
             my $file_content
                 = do { local $/; local @ARGV = ( $result->[2] ); <> };
-            is( $file_content, $content, "content ($desc) for $url" );
+            is( $file_content, $content, "content ($desc) for $url [$status]" );
         }
         else {
-            is( $result->[2], '', "no file ($desc) for $url" );
+            is( $result->[2], '', "no file ($desc) for $url [$status]" );
         }
     }
 }
