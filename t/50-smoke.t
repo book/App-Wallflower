@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Temp qw( tempdir );
+use Path::Tiny ();
 use List::Util qw( sum );
 use Wallflower;
 
@@ -78,7 +78,7 @@ plan tests => sum map 2 * ( @$_ - 2 ), @tests;
 
 for my $t (@tests) {
     my ( $desc, $app, @urls ) = @$t;
-    my $dir = tempdir( CLEANUP => 1 );
+    my $dir = Path::Tiny->tempdir;
 
     my $wf = Wallflower->new(
         application => $app,

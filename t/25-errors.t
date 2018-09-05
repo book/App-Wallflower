@@ -1,12 +1,11 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Temp qw( tempdir );
-use File::Spec;
+use Path::Tiny ();
 use Wallflower;
 
-my $dir = tempdir( CLEANUP => 1 );
-my $file = File::Spec->catfile( $dir, 'uggh' );
+my $dir = Path::Tiny->tempdir;
+my $file = Path::Tiny->new( $dir, 'uggh' );
 {
     open my $fh, '>', $file or die "Can't open $file for writing: $!";
     close $fh;
@@ -16,7 +15,7 @@ my $file = File::Spec->catfile( $dir, 'uggh' );
 my @tests_new = (
     [ [], 'no arguments' => qr/^application is required / ],
     [   [   application => 'dummy',
-            destination => File::Spec->catdir( $dir, 'bap' ),
+            destination => Path::Tiny->new( $dir, 'bap' ),
         ],
         'non-existing destination' => qr/^destination is invalid /
     ],
