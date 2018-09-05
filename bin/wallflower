@@ -34,6 +34,7 @@ as long as the shorter version is unambiguous.
                             (default: deployment)
 
  --parallel    <count>      Number of processes to run in parallel
+                            (recommended value: number of cores)
 
  --index       <filename>   Name of index file for URLs ending in /
                             (default: index.html)
