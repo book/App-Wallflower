@@ -50,6 +50,30 @@ my @urls = (
 # setup test data
 push @tests, [ 'direct content', \&build_response, @urls ];
 
+push @tests, [
+    'delayed response',
+    sub {
+        my $res = build_response(shift);
+        sub { shift->($res) }
+    },
+    @urls
+];
+
+push @tests, [
+    'streaming',
+    sub {
+        my $res = build_response(shift);
+        my $body = ref $res->[2] ? $res->[2][0] : $res->[2];
+        sub {
+            my $responder = shift;
+            my $writer = $responder->( [ @{$res}[ 0, 1 ] ] );
+            $writer->write( $body );
+            $writer->close;
+          }
+    },
+    @urls
+];
+
 plan tests => sum map 2 * ( @$_ - 2 ), @tests;
 
 for my $t (@tests) {

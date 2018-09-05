@@ -32,10 +32,6 @@ my @tests_get = (
         'app that returns a HASHREF',
         qr/^Unknown response from application: HASH\(0x[0-9a-f]+\) /
     ],
-    [   [ application => sub { sub {} }, destination => $dir ],
-        'app that returns a CODEREF',
-        qr/^Delayed response and streaming not supported yet /
-    ],
     [   [ application => sub { [ 200, [], {} ] }, destination => $dir ],
         'app that returns a bad body',
         qr/^Don't know how to handle body: HASH\(0x[0-9a-f]+\) /
