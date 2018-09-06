@@ -52,6 +52,9 @@ my @callbacks = (
                   while $i < @$headers && lc( $headers->[$i] ) ne 'location';
                 diag( "$url => " . ( $headers->[ $i + 1 ] || '?' ) );
             }
+            elsif ( $status == 304 ) {
+              SKIP: { skip( $url, 1 ); }
+            }
             else {
                 is( $status, 200, $url->path );
             }
