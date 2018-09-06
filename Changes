@@ -2,6 +2,11 @@ Revision history for App-Wallflower
 
 {{$NEXT}}
 
+1.013 2018-09-06 BOOK
+    - fix handling of 301 in wallflower (broken in 1.010 .. 1.012)
+    - 301 redirects are not considered errors in TAP mode any more
+    - minor fixes in tests
+
 1.012 2018-09-05 BOOK
     - refactor parallel processing to more evenly distribute the work
       between children (the parent won't process any URL)
