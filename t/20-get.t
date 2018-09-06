@@ -210,7 +210,7 @@ for my $t (@tests) {
             "app ($desc) for $url"
         );
 
-        if ( $status eq '200' || $status eq '304' ) {
+        if ( $status == 200 || $status == 304 ) {
             my $file_content
                 = do { local $/; local @ARGV = ( $result->[2] ); <> };
             is( $file_content, $content, "content ($desc) for $url" );

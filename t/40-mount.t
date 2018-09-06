@@ -71,7 +71,7 @@ for my $t (@tests) {
             "app ($desc) for $url"
         );
 
-        if ( $status eq '200' ) {
+        if ( $status == 200 ) {
             my $file_content
                 = do { local $/; local @ARGV = ( $result->[2] ); <> };
             is( $file_content, $content, "content ($desc) for $url" );

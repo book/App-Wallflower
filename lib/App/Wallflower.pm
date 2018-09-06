@@ -419,12 +419,12 @@ sub _process_queue {
 
         # obtain links to resources
         my ( $status, $headers, $file ) = @$response;
-        if ( ( $status eq '200' || $status eq '304' ) && $follow ) {
+        if ( ( $status == 200 || $status == 304 ) && $follow ) {
             $self->_push_todo( links_from( $response => $url ) );
         }
 
         # follow 301 Moved Permanently
-        elsif ( $status eq '301' ) {
+        elsif ( $status == 301 ) {
             require HTTP::Headers;
             my $l = HTTP::Headers->new(@$headers)->header('Location');
             $self->_push_todo($l) if $l;
