@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Test::More;
-use File::Temp qw( tempdir );
 use Path::Tiny ();
 use List::Util qw( sum );
 use URI;
@@ -20,7 +19,7 @@ my @tests;
 
 push @tests, [
     'direct content',
-    tempdir( CLEANUP => 1 ),
+    Path::Tiny->tempdir( CLEANUP => 1 ),
     sub {
         [   200,
             [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
@@ -50,7 +49,7 @@ push @tests, [
 
 push @tests, [
     'content in a glob',
-    tempdir( CLEANUP => 1 ),
+    Path::Tiny->tempdir( CLEANUP => 1 ),
     sub {
         [   200,
             [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
@@ -70,7 +69,7 @@ push @tests, [
 
 push @tests, [
     'content in an object',
-    tempdir( CLEANUP => 1 ),
+    Path::Tiny->tempdir( CLEANUP => 1 ),
     sub {
         [   200,
             [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
@@ -93,7 +92,7 @@ push @tests, [
 
 push @tests, [
     'status in the URL',
-    tempdir( CLEANUP => 1 ),
+    Path::Tiny->tempdir( CLEANUP => 1 ),
     sub {
         my $env = shift;
         my ($status) = $env->{REQUEST_URI} =~ m{/(\d\d\d)$}g;
@@ -121,7 +120,7 @@ push @tests, [
 
 push @tests, [
     'app that dies',
-    tempdir( CLEANUP => 1 ),
+    Path::Tiny->tempdir( CLEANUP => 1 ),
     sub {die},
     [   '/' => 500,
         [ 'Content-Type' => 'text/plain', 'Content-Length' => 21 ], '', ''
@@ -131,7 +130,7 @@ push @tests, [
 my $last_modified = time2str( time - 10 );
 push @tests, [
     'app supporting If-Modified-Since',
-    tempdir( CLEANUP => 1 ),
+    Path::Tiny->tempdir( CLEANUP => 1 ),
     do {
         my %date;
         sub {
@@ -164,7 +163,7 @@ push @tests, [
 
 push @tests, [
     'not respecting directory semantics',
-    tempdir( CLEANUP => 1 ),
+    Path::Tiny->tempdir( CLEANUP => 1 ),
     sub {
         [   200,
             [ 'Content-Type' => 'text/plain', 'Content-Length' => 13 ],
