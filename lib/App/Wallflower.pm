@@ -416,7 +416,7 @@ sub _process_queue {
         elsif ( $status eq '301' ) {
             require HTTP::Headers;
             my $l = HTTP::Headers->new(@$headers)->header('Location');
-            unshift @queue, $l if $l;
+            $self->_push_todo($l) if $l;
         }
     }
 }
