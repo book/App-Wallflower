@@ -132,7 +132,6 @@ push @tests, [
     'app supporting If-Modified-Since',
     Path::Tiny->tempdir( CLEANUP => 1 ),
     do {
-        my %date;
         sub {
             my $env = shift;
             my $since = $env->{HTTP_IF_MODIFIED_SINCE} || '';
@@ -158,7 +157,7 @@ push @tests, [
         'index.html',
         'Hello, World!'
     ],
-    [ '/' => 304, [], '', '' ],
+    [ '/' => 304, [], 'index.html', 'Hello, World!' ],
 ];
 
 push @tests, [
@@ -211,7 +210,7 @@ for my $t (@tests) {
             "app ($desc) for $url"
         );
 
-        if ( $status eq '200' ) {
+        if ( $status eq '200' || $status eq '304' ) {
             my $file_content
                 = do { local $/; local @ARGV = ( $result->[2] ); <> };
             is( $file_content, $content, "content ($desc) for $url" );

@@ -192,6 +192,9 @@ sub get {
             utime $epoch, $epoch, $file;
         }
     }
+    elsif ( $status eq '304' ) {
+        $file = $target;
+    }
 
     return [ $status, $headers, $file ];
 }
