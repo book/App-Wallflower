@@ -50,7 +50,7 @@ my @callbacks = (
                 my $i = 0;
                 $i += 2
                   while $i < @$headers && lc( $headers->[$i] ) ne 'location';
-                diag( "$url => " . ( $headers->[ $i + 1 ] || '?' ) );
+                note( "$url => " . ( $headers->[ $i + 1 ] || '?' ) );
             }
             elsif ( $status == 304 ) {
               SKIP: { skip( $url, 1 ); }
