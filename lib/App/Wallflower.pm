@@ -416,7 +416,7 @@ sub _process_queue {
 
         # obtain links to resources
         my ( $status, $headers, $file ) = @$response;
-        if ( $status eq '200' && $follow ) {
+        if ( ( $status eq '200' || $status eq '304' ) && $follow ) {
             $self->_push_todo( links_from( $response => $url ) );
         }
 
