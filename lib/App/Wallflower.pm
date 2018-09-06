@@ -46,7 +46,15 @@ my @callbacks = (
         tap => sub {
             my ( $url, $response ) = @_;
             my ( $status, $headers, $file ) = @$response;
-            is( $status, 200, $url->path );
+            if ( $status == 301 ) {
+                my $i = 0;
+                $i += 2
+                  while $i < @$headers && lc( $headers->[$i] ) ne 'location';
+                diag( "$url => " . ( $headers->[ $i + 1 ] || '?' ) );
+            }
+            else {
+                is( $status, 200, $url->path );
+            }
         },
     ],
 );
