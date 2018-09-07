@@ -95,7 +95,7 @@ not be modified.
 As of version 1.008, if the application sends the C<Last-Modified> header,
 it we be used to set the modification time of the target file.
 
-As of version 1.013, if the C<304> response contains a C<Content-Type>
+As of version 1.014, if the C<304> response contains a C<Content-Type>
 header, and L<wallflower> was run with the I<--follow> option, it will
 looked for more links to follow in the existing file.
 
