@@ -30,7 +30,15 @@ my @callbacks = (
             my ( $url, $response ) = @_;
             my ( $status, $headers, $file ) = @$response;
             return if $status == 200;
-            printf "$status %s\n", $url->path;
+            if ( $status == 301 ) {
+                my $i = 0;
+                $i += 2
+                  while $i < @$headers && lc( $headers->[$i] ) ne 'location';
+                printf "$status %s -> %s\n", $url->path, $headers->[ $i + 1 ] || '?';
+            }
+            else {
+                printf "$status %s\n", $url->path;
+            }
         },
     ],
     [
