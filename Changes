@@ -2,6 +2,11 @@ Revision history for App-Wallflower
 
 {{$NEXT}}
 
+1.015 2018-09-07 BOOK
+    - fixed a race condition that would lose parts of the to-do list
+      when using --filter in combination with --parallel
+    - improved output for 301 (show the redirect location)
+
 1.014 2018-09-07 BOOK
     - improve handling of 304 responses, and documentation around
       them and If-Modified-Since
