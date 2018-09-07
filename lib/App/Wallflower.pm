@@ -243,7 +243,7 @@ sub _aggregate_todo {
 
     # aggregate all child todo into ours and save it as __TODO__
     local *ARGV;
-    @ARGV = glob $self->{_ipc_dir_}->child('todo-*');
+    @ARGV = ( $TODO, glob $self->{_ipc_dir_}->child('todo-*') );
     no warnings 'inplace';    # some files may already be gone
     my $fh = File::Temp->new(
         TEMPLATE => "__TODO__-XXXX",
