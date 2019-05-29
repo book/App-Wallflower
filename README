@@ -13,6 +13,17 @@ The best way to use it is to actually design your Plack application to
 serve "static" files. Please consult the Wallflower::Tutorial manual page
 for tips on how to write your Plack application to work with wallflower.
 
+INSTALL
+
+This module uses Dist::Zilla. You will need to install it if you are building it from source. Use
+
+    dzil authordeps --missing | cpanm
+
+to install only dependencies, or
+
+    dzil test
+
+to test.
 
 COPYRIGHT AND LICENCE
 
