@@ -4,6 +4,6 @@ perl:
   - "5.28"
   - "5.26"
 
-install: dzil authordeps --missing | cpanm
+install: cpanm Plack::Util Test::Output
 
 script: prove -lr t
