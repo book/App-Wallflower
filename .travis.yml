@@ -6,4 +6,4 @@ perl:
 
 install: dzil authordeps --missing | cpanm
 
-script: dzil test
+script: prove -lr t
